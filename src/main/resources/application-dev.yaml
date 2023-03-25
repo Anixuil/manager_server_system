@@ -1,0 +1,57 @@
+#开发环境
+
+#端口号
+server:
+  port: 8080
+  servlet:
+    context-path: /anixuil
+  tomcat:
+    max-swallow-size: 1024MB # 重要的一行，修改tomcat的吞吐量
+
+file:
+  uploadFolder: d://code/java/public/ # 文件上传目录
+  staticAccessPath: /static/  # 静态资源对外暴露的访问路径
+
+spring:
+  security:
+    user:
+      name: anixuil
+      password: 200131
+  #数据库
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/manager_database?useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
+  servlet:
+    multipart:
+      max-request-size: 1024MB # 上传文件总的最大值 默认10mb
+      max-file-size: 100MB  # 单个文件最大值 默认10mb
+      enabled: true
+  mvc:
+    static-path-pattern: /public/** #过滤规则
+  web:
+    resources:
+      static-locations: file:D:/code/java/public/    # 静态资源位置
+  # 邮箱验证
+  mail:
+    default-encoding: UTF-8
+    host: smtp.qq.com
+    username: anixuil@foxmail.com
+    password: irorvcsdagzsgehd
+    properties:
+      mail:
+        smtp:
+          auth: true
+        starttls:
+          enable: true
+          required: true
+
+#mybatisplus
+mybatis-plus:
+  # 开启mybatisplus日志
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: true #默认开启驼峰命名法 可以不用设置该属性
+    call-setters-on-nulls: true #如果查询结果中包含空值的列，则mybaits在映射的时候，不会映射这个字段

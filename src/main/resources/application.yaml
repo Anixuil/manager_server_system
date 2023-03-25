@@ -1,0 +1,41 @@
+#主配置
+
+#选择环境
+spring:
+  profiles:
+    active: dev
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+mybatis:
+  config--location:
+    classpath:mybatis.cfg.xml
+  type-aliases-package: com.anixuil.manager_system.entity
+  mapper-locations:
+    classpath:mapper/*.xml
+# mybatisPlus
+mybatis-plus:
+  call-setters-on-nulls: false
+  #全局配置
+  global-config:
+    db-config:
+      # 主键id生成策略
+      id-type: auto
+      # 逻辑删除策略
+      logic-delete-field: hide
+      logic-not-delete-value: 0
+      logic-delete-value: 1
+  # 指定mapper.xml的位置
+  mapper-locations:
+    classpath:mapper/*.xml
+  #扫描实体类的位置,在此处指明扫描实体类的包，在 mapper.xml 中就可以不写实体类的全路径名
+  type-aliases-package: com.anixuil.manager_system.entity
+
+
+
+hwyun: #华为云obs配置信息
+  obs:
+    accessKey: CMTUFULLB5U2KBCDHHZT
+    securityKey: sdTAHXv3ZrQwCika1fqVschwmIiC0TsNszpbaD6M
+    endPoint: https://obs.cn-south-1.myhuaweicloud.com
+    bucketName: anixuil
