@@ -40,9 +40,9 @@ public class UserController {
             userTable.setCreateDate(Datetime.getTimestamp());
             Boolean result = userTableService.save(userTable);
             if(result){
-                return Rest.success(msg,result);
+                return Rest.success(msg, true);
             }
-            return Rest.fail(msg,result);
+            return Rest.fail(msg, false);
         }catch (Exception e){
             return Rest.error(msg,e);
         }
@@ -64,13 +64,12 @@ public class UserController {
                 return Rest.fail("密码错误",null);
             }
             QueryWrapper<UserTable> wrapper = new QueryWrapper<>();
-            wrapper.eq("user_name",userTable.getUserName());
-//            UserTable info = userTableService.getOne(wrapper);
-            Map<String,Object> info = userTableService.getMap(
-                    new QueryWrapper<UserTable>()
-                            .select("user_uuid","user_name")
-                            .eq("user_name",userTable.getUserName())
-            );
+            wrapper.eq("user_name",userTable.getUserName())
+                    .select("user_uuid","user_name");
+            UserTable user = userTableService.getOne(wrapper);
+            Map<String,Object> info = new HashMap<>();
+            info.put("userUuid",user.getUserUuid());
+            info.put("userName",user.getUserName());
             System.out.println(info);
             Map<String,Object> data = new HashMap<>();
             data.put("userInfo",info);

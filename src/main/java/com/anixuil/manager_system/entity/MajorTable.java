@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.sql.Timestamp;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -38,5 +40,6 @@ public class MajorTable implements Serializable {
     private String majorIntro;
 
     @TableField("create_date")
-    private String createDate;
+    private Timestamp createDate;
+
 }

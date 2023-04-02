@@ -25,8 +25,8 @@ public class JwtUtils {
     //生成token
     public String createToken(Map UserTable){
         //拿取用户信息
-        String userUuid = UserTable.get("user_uuid").toString();
-        String userName = UserTable.get("user_name").toString();
+        String userUuid = UserTable.get("userUuid").toString();
+        String userName = UserTable.get("userName").toString();
 
         //jwt配置
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;   //指定签名算法
