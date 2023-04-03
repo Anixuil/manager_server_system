@@ -11,6 +11,8 @@ import com.anixuil.manager_system.service.StudentTableService;
 import com.anixuil.manager_system.utils.Datetime;
 import com.anixuil.manager_system.utils.Uuid;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,13 +35,15 @@ public class DepartController {
 
     //获取所有院系
     @GetMapping("getAllDepart")
-    public Rest getAllDepart(){
+    public Rest getAllDepart(Integer pageNum,Integer pageSize){
         String msg = "获取所有院系";
         try{
-            //用stream流来弄出一个list 里面是所有的院系数据 用map来弄出一个list 里面是所有的专业数据 专业数据里添加一个字段 studentCount 用来存放专业下的学生数量
+            IPage<DepartTable> page = new Page<>(pageNum,pageSize);
+            //分页查询 用stream流来弄出一个list 里面是所有的院系数据 用map来弄出一个list 里面是所有的专业数据 专业数据里添加一个字段 studentCount 用来存放专业下的学生数量
             QueryWrapper queryWrapper = new QueryWrapper();
             queryWrapper.select("depart_uuid","depart_name","depart_intro","create_date");
-            List<DepartTable> departTableList = departTableService.list(queryWrapper);
+            IPage<DepartTable> departTableIPage = departTableService.page(page, queryWrapper);
+            List<DepartTable> departTableList = departTableIPage.getRecords();
             List<Map<String,Object>> mapList = departTableList.stream().map(departTable -> {
                 Map<String,Object> map = new HashMap<>();
                 map.put("departUuid",departTable.getDepartUuid());
@@ -59,8 +63,15 @@ public class DepartController {
                 }).collect(Collectors.toList()));
                 return map;
             }).collect(Collectors.toList());
-
-            return Rest.success(msg,mapList);
+            //返回的数据
+            Map<String,Object> map = new HashMap<>();
+            //分页数据
+            map.put("total",departTableIPage.getTotal());
+            map.put("currentPage",departTableIPage.getCurrent());
+            map.put("pageSize",departTableIPage.getSize());
+            map.put("pages",departTableIPage.getPages());
+            map.put("records",mapList);
+            return Rest.success(msg,map);
         }catch (Exception e){
             return Rest.error(msg,e);
         }
@@ -73,7 +84,41 @@ public class DepartController {
         try{
             departTable.setDepartUuid(Uuid.getUuid());
             departTable.setCreateDate(Datetime.getTimestamp());
+            departTable.setUpdateDate(departTable.getCreateDate());
             Boolean result = departTableService.save(departTable);
+            if(result){
+                return Rest.success(msg, true);
+            }
+            return Rest.fail(msg, false);
+        }catch (Exception e){
+            return Rest.error(msg,e);
+        }
+    }
+
+    //修改院系
+    @PutMapping("updateDepart")
+    public Rest updateDepart(@RequestBody DepartTable departTable){
+        String msg = "修改院系";
+        try{
+            departTable.setUpdateDate(Datetime.getTimestamp());
+            Boolean result = departTableService.updateById(departTable);
+            if(result){
+                return Rest.success(msg, true);
+            }
+            return Rest.fail(msg, false);
+        }catch (Exception e){
+            return Rest.error(msg,e);
+        }
+    }
+
+    //删除院系
+    @DeleteMapping("deleteDepart")
+    public Rest deleteDepart(@RequestBody DepartTable departTable){
+        String msg = "删除院系";
+        try{
+            String departUuid = departTable.getDepartUuid();
+            System.out.println(departUuid);
+            Boolean result = departTableService.remove(new QueryWrapper<DepartTable>().eq("depart_uuid",departUuid));
             if(result){
                 return Rest.success(msg, true);
             }

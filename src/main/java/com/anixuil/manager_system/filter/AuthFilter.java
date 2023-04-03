@@ -23,13 +23,14 @@ public class AuthFilter implements Filter {
         try{
             if(url != null){
                 //登录请求直接放行
-                if("/anixuil/user/login".equals(url) || "/anixuil/user/register".equals(url) || "/anixuil/publicfile/upload".equals(url)){
+                if("/anixuil/user/login".equals(url) || "/anixuil/user/register".equals(url) || url.contains("publicfile")){
                     filterChain.doFilter(servletRequest,servletResponse);
                     return;
                 }
                 else{
                     //其他请求拦截验证token
-                    String token = ((HttpServletRequest)servletRequest).getHeader("token");
+                    String token = String.valueOf(((HttpServletRequest)servletRequest).getHeaders("token"));
+                    System.out.println(token);
                     if(StringUtils.isNotBlank(token)) {
                         //token验证结果
                         rest = jwtUtils.verifyToken(((HttpServletRequest) servletRequest), token);

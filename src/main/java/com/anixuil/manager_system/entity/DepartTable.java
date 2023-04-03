@@ -28,16 +28,19 @@ public class DepartTable implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId("depart_uuid")
-    private String departUuid;
-
     @TableField("depart_name")
     private String departName;
 
     @TableField("depart_intro")
     private String departIntro;
 
+    @TableId("depart_uuid")
+    private String departUuid;
+
     @TableField("create_date")
     private Timestamp createDate;
+
+    @TableField("update_date")
+    private Timestamp updateDate;
 
 }

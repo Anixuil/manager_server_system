@@ -70,7 +70,7 @@ public class UserController {
             Map<String,Object> info = new HashMap<>();
             info.put("userUuid",user.getUserUuid());
             info.put("userName",user.getUserName());
-            System.out.println(info);
+//            System.out.println(info);
             Map<String,Object> data = new HashMap<>();
             data.put("userInfo",info);
             data.put("token",jwtUtils.createToken(info));
