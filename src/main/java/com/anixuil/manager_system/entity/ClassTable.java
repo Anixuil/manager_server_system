@@ -1,9 +1,11 @@
 package com.anixuil.manager_system.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
+import java.sql.Timestamp;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -25,18 +27,31 @@ public class ClassTable implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId("class_uuid")
+    @TableId(value = "class_uuid", type = IdType.ASSIGN_UUID)
+    @ExcelProperty("课程UUID")
     private String classUuid;
 
     @TableField("class_name")
+    @ExcelProperty("课程名称")
     private String className;
 
     @TableField("class_intro")
+    @ExcelProperty("课程简介")
     private String classIntro;
 
     @TableField("major_uuid")
+    @ExcelProperty("专业UUID")
     private String majorUuid;
 
-    @TableField("create_date")
-    private String createDate;
+    @TableField(value = "create_date", fill = FieldFill.INSERT)
+    @ExcelProperty("创建时间")
+    private Timestamp createDate;
+
+    @TableField(value = "update_date", fill = FieldFill.INSERT_UPDATE)
+    @ExcelProperty("更新时间")
+    private Timestamp updateDate;
+
+    @TableField("is_delete")
+    @ExcelProperty("是否删除")
+    private String isDelete;
 }

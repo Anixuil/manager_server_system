@@ -1,9 +1,10 @@
 package com.anixuil.manager_system.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
+import java.sql.Timestamp;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -25,7 +26,7 @@ public class IndexWheelTable implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId("index_wheel_uuid")
+    @TableId(value = "index_wheel_uuid", type = IdType.ASSIGN_UUID)
     private String indexWheelUuid;
 
     @TableField("index_wheel_title")
@@ -40,6 +41,12 @@ public class IndexWheelTable implements Serializable {
     @TableField("index_wheel_href")
     private String indexWheelHref;
 
-    @TableField("create_date")
-    private String createDate;
+    @TableField(value = "create_date", fill = FieldFill.INSERT)
+    private Timestamp createDate;
+
+    @TableField(value = "update_date", fill = FieldFill.INSERT_UPDATE)
+    private Timestamp updateDate;
+
+    @TableField("is_delete")
+    private String isDelete;
 }

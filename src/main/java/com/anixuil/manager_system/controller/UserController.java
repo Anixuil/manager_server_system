@@ -36,8 +36,6 @@ public class UserController {
             //密码加密
             BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
             userTable.setUserPassword(bCryptPasswordEncoder.encode(userTable.getUserPassword()));
-            userTable.setUserUuid(Uuid.getUuid());
-            userTable.setCreateDate(Datetime.getTimestamp());
             Boolean result = userTableService.save(userTable);
             if(result){
                 return Rest.success(msg, true);

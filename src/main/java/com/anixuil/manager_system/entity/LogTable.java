@@ -1,9 +1,10 @@
 package com.anixuil.manager_system.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
+import java.sql.Timestamp;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -25,7 +26,7 @@ public class LogTable implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId("log_uuid")
+    @TableId(value = "log_uuid", type = IdType.ASSIGN_UUID)
     private String logUuid;
 
     @TableField("log_title")
@@ -40,6 +41,6 @@ public class LogTable implements Serializable {
     @TableField("log_status")
     private String logStatus;
 
-    @TableField("create_date")
-    private String createDate;
+    @TableField(value = "create_date", fill = FieldFill.INSERT)
+    private Timestamp createDate;
 }

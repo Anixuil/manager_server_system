@@ -1,9 +1,10 @@
 package com.anixuil.manager_system.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
+import java.sql.Timestamp;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -25,7 +26,7 @@ public class EnroPlanTable implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId("enro_plan_uuid")
+    @TableId(value = "enro_plan_uuid", type = IdType.ASSIGN_UUID)
     private String enroPlanUuid;
 
     @TableField("major_uuid")
@@ -37,6 +38,12 @@ public class EnroPlanTable implements Serializable {
     @TableField("enro_real_number")
     private Integer enroRealNumber;
 
-    @TableField("create_date")
-    private String createDate;
+    @TableField(value = "create_date", fill = FieldFill.INSERT)
+    private Timestamp createDate;
+
+    @TableField(value = "update_date", fill = FieldFill.INSERT_UPDATE)
+    private Timestamp updateDate;
+
+    @TableField("is_delete")
+    private String isDelete;
 }

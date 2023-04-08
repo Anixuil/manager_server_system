@@ -1,10 +1,8 @@
 package com.anixuil.manager_system.controller;
 
-import com.alibaba.excel.EasyExcel;
-import com.anixuil.manager_system.entity.DepartTable;
-import com.anixuil.manager_system.entity.Rest;
-import com.anixuil.manager_system.service.DepartTableService;
-import com.anixuil.manager_system.utils.DepartListener;
+import com.anixuil.manager_system.entity.*;
+import com.anixuil.manager_system.service.*;
+import com.anixuil.manager_system.utils.ImportUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,36 +21,63 @@ public class uploadController {
 
     @Autowired
     DepartTableService departTableService;
-
-//    //枚举类 用来存放所有service类全类名
-//    enum ServiceName{
-//        departTableService("com.anixuil.manager_system.service.DepartTableService"),
-//        majorTableService("com.anixuil.manager_system.service.MajorTableService"),
-//        studentTableService("com.anixuil.manager_system.service.StudentTableService"),
-//        teacherTableService("com.anixuil.manager_system.service.TeacherTableService"),
-//        classTableService("com.anixuil.manager_system.service.ClassTableService"),
-//        examScoreTableService("com.anixuil.manager_system.service.ExamScoreTableService"),
-//        userTableService("com.anixuil.manager_system.service.UserTableService"),
-//        candidateTableService("com.anixuil.manager_system.service.CandidateTableService");
-//
-//        private final String value;
-//
-//        ServiceName(String value){
-//            this.value = value;
-//        }
-//
-//        public String getValue(){
-//            return value;
-//        }
-//    }
+    @Autowired
+    UserTableService UserTableService;
+    @Autowired
+    CandidateTableService candidateTableService;
+    @Autowired
+    ClassTableService classTableService;
+    @Autowired
+    ExamClassTableService examClassTableService;
+    @Autowired
+    MajorTableService majorTableService;
+    @Autowired
+    StudentTableService studentTableService;
+    @Autowired
+    TeacherTableService teacherTableService;
 
     //excel表格导入
     @PostMapping("importExcel")
-    public Rest importExcel(@RequestBody MultipartFile file,String className) throws ClassNotFoundException {
+    public Rest importExcel(@RequestBody MultipartFile file,String className){
         String msg = "导入excel表格";
         try{
             if(file != null){
-                EasyExcel.read(file.getInputStream(), DepartTable.class,new DepartListener(departTableService)).sheet().doRead();
+                switch (className){
+//                    case "DepartTable":
+//                        //调用ImportUtil工具类导入方法
+//                        List<DepartTable> departTableList = new ImportUtil<DepartTable>().importExcel(file,className);
+//                        departTableService.saveBatch(departTableList);
+//                        break;
+                    case "UserTable":
+                        List<UserTable> userTableList = new ImportUtil<UserTable>().importExcel(file,className);
+
+//                        UserTableService.saveBatch(userTableList);
+                        break;
+//                    case "CandidateTable":
+//                        List<CandidateTable> candidateTableList = new ImportUtil<CandidateTable>().importExcel(file,className);
+//                        candidateTableService.saveBatch(candidateTableList);
+//                        break;
+//                    case "ClassTable":
+//                        List<ClassTable> classTableList = new ImportUtil<ClassTable>().importExcel(file,className);
+//                        classTableService.saveBatch(classTableList);
+//                        break;
+//                    case "ExamClassTable":
+//                        List<ExamClassTable> examClassTableList = new ImportUtil<ExamClassTable>().importExcel(file,className);
+//                        examClassTableService.saveBatch(examClassTableList);
+//                        break;
+//                    case "MajorTable":
+//                        List<MajorTable> majorTableList = new ImportUtil<MajorTable>().importExcel(file,className);
+//                        majorTableService.saveBatch(majorTableList);
+//                        break;
+//                    case "StudentTable":
+//                        List<StudentTable> studentTableList = new ImportUtil<StudentTable>().importExcel(file,className);
+//                        studentTableService.saveBatch(studentTableList);
+//                        break;
+//                    case "TeacherTable":
+//                        List<TeacherTable> teacherTableList = new ImportUtil<TeacherTable>().importExcel(file,className);
+//                        teacherTableService.saveBatch(teacherTableList);
+//                        break;
+                }
                 return Rest.success(msg,"导入成功");
             }
             return Rest.fail(msg,"导入失败");
