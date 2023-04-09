@@ -39,6 +39,10 @@ public class ExamScoreTable implements Serializable {
     @ExcelProperty("考试科目UUID")
     private String examClassUuid;
 
+    @TableField("exam_type")
+    @ExcelProperty("考试类别")
+    private String examType;
+
     @TableField("exam_score")
     @ExcelProperty("考试成绩")
     private Double examScore;

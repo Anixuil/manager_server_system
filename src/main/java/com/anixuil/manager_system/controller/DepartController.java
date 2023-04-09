@@ -41,7 +41,7 @@ public class DepartController {
             IPage<DepartTable> page = new Page<>(pageNum,pageSize);
             //分页查询 用stream流来弄出一个list 里面是所有的院系数据 用map来弄出一个list 里面是所有的专业数据 专业数据里添加一个字段 studentCount 用来存放专业下的学生数量
             QueryWrapper queryWrapper = new QueryWrapper();
-            queryWrapper.select("depart_uuid","depart_name","depart_intro","create_date");
+            queryWrapper.select("depart_uuid","depart_name","depart_intro","create_date","update_date","is_delete");
             IPage<DepartTable> departTableIPage = departTableService.page(page, queryWrapper);
             List<DepartTable> departTableList = departTableIPage.getRecords();
             List<Map<String,Object>> mapList = departTableList.stream().map(departTable -> {
@@ -51,6 +51,9 @@ public class DepartController {
                 map.put("departIntro",departTable.getDepartIntro());
                 //格式化一下departTable.getCreateDate()的时间戳
                 map.put("createDate", Datetime.format(departTable.getCreateDate()));
+                map.put("updateDate",Datetime.format(departTable.getUpdateDate()));
+                map.put("isDelete",departTable.getIsDelete());
+                map.put("majorCount",majorTableService.count(new QueryWrapper<MajorTable>().eq("depart_uuid",departTable.getDepartUuid())));
                 map.put("majorList",majorTableService.list(new QueryWrapper<MajorTable>().eq("depart_uuid",departTable.getDepartUuid())).stream().map(majorTable -> {
                     Map<String,Object> majorMap = new HashMap<>();
                     majorMap.put("majorUuid",majorTable.getMajorUuid());
@@ -58,6 +61,8 @@ public class DepartController {
                     majorMap.put("majorIntro",majorTable.getMajorIntro());
                     //格式化一下majorTable.getCreateDate()的时间戳
                     majorMap.put("createDate", Datetime.format(majorTable.getCreateDate()));
+                    majorMap.put("updateDate",Datetime.format(majorTable.getUpdateDate()));
+                    majorMap.put("isDelete",majorTable.getIsDelete());
                     majorMap.put("studentCount",studentTableService.count(new QueryWrapper<StudentTable>().eq("major_uuid",majorTable.getMajorUuid())));
                     return majorMap;
                 }).collect(Collectors.toList()));
@@ -82,9 +87,6 @@ public class DepartController {
     public Rest addDepart(@RequestBody DepartTable departTable){
         String msg = "新建院系";
         try{
-            departTable.setDepartUuid(Uuid.getUuid());
-            departTable.setCreateDate(Datetime.getTimestamp());
-            departTable.setUpdateDate(departTable.getCreateDate());
             Boolean result = departTableService.save(departTable);
             if(result){
                 return Rest.success(msg, true);
@@ -100,7 +102,6 @@ public class DepartController {
     public Rest updateDepart(@RequestBody DepartTable departTable){
         String msg = "修改院系";
         try{
-            departTable.setUpdateDate(Datetime.getTimestamp());
             Boolean result = departTableService.updateById(departTable);
             if(result){
                 return Rest.success(msg, true);
@@ -117,7 +118,6 @@ public class DepartController {
         String msg = "删除院系";
         try{
             String departUuid = departTable.getDepartUuid();
-            System.out.println(departUuid);
             Boolean result = departTableService.remove(new QueryWrapper<DepartTable>().eq("depart_uuid",departUuid));
             if(result){
                 return Rest.success(msg, true);
