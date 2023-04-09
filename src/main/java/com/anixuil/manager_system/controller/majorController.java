@@ -90,6 +90,7 @@ public class majorController {
             List<Map<String,Object>> mapList = majorTableList.stream().map(majorTable -> {
                 Map<String,Object> map = new HashMap<>();
                 map.put("majorUuid",majorTable.getMajorUuid());
+                map.put("departUuid",majorTable.getDepartUuid());
                 map.put("majorName",majorTable.getMajorName());
                 map.put("majorIntro",majorTable.getMajorIntro());
                 //格式化一下majorTable.getCreateDate()的时间戳
