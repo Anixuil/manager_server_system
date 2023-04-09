@@ -16,7 +16,7 @@ public class AuthFilter implements Filter {
 
     //重写其中doFilter方法
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException{
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException{
         String url = ((HttpServletRequest)servletRequest).getRequestURI();
         JwtUtils jwtUtils = new JwtUtils();
         Rest rest = new Rest();

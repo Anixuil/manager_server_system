@@ -6,6 +6,7 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.net.URLDecoder;
 import java.security.SecureRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,6 +58,7 @@ public class AESUtil {
     //解密
     public static String decrypt(String content,String appKey){
         try{
+            content = URLDecoder.decode(content,"utf-8");
             //实例化
             Cipher cipher = Cipher.getInstance(DEFAULT_CIPHER_ALGORITHM);
             //使用密钥初始化,设置为解密模式

@@ -50,6 +50,8 @@ public class Generator {
         tables.add("index_wheel_table");
         tables.add("work_flow_table");
         tables.add("log_table");
+        tables.add("dict_table");
+        tables.add("dict_field_table");
         //开始生成
         FastAutoGenerator.create(url,username,password)
                 //全局配置

@@ -74,11 +74,7 @@ public class JwtUtils {
             //验证成功后 将解密的token设置到request中的header中去
             reflectSetTokenValue(httpServletRequest,"token",aesToken);
             return Rest.success(msg,true);
-        }catch (SignatureException | MalformedJwtException e){
-            return Rest.error(msg,e);
-        }catch (ExpiredJwtException e){
-            return Rest.error(msg,e);
-        }catch (Exception e){
+        } catch (Exception e){
             return Rest.error(msg,e);
         }
     }
@@ -95,13 +91,9 @@ public class JwtUtils {
                     .setSigningKey(secret)
                     .parseClaimsJws(aesToken).getBody();
 
-//            System.out.println(claims);
+            System.out.println(claims);
             return claims;
-        }catch (SignatureException | MalformedJwtException e){
-            System.out.println(e);
-        }catch (ExpiredJwtException e){
-            System.out.println(e);
-        }catch (Exception e){
+        } catch (Exception e){
             System.out.println(e);
         }
         return null;
