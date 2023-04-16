@@ -35,6 +35,12 @@ public class majorController {
     public Rest addMajor(@RequestBody MajorTable majorTable){
         String msg = "新增专业";
         try{
+            //判断同院系下专业名是否重复
+            String departUuid = majorTable.getDepartUuid();
+            String majorName = majorTable.getMajorName();
+            if(majorTableService.getOne(new QueryWrapper<MajorTable>().eq("depart_uuid",departUuid).eq("major_name",majorName)) != null) {
+                return Rest.fail("专业名重复," + msg, "专业名重复");
+            }
             Boolean result = majorTableService.save(majorTable);
             if(result){
                 return Rest.success(msg, true);

@@ -87,6 +87,11 @@ public class DepartController {
     public Rest addDepart(@RequestBody DepartTable departTable){
         String msg = "新建院系";
         try{
+            //是否有重复的院系名
+            Integer count = Math.toIntExact(departTableService.count(new QueryWrapper<DepartTable>().eq("depart_name", departTable.getDepartName())));
+            if(count > 0){
+                return Rest.fail("院系名重复," + msg,"院系名重复");
+            }
             Boolean result = departTableService.save(departTable);
             if(result){
                 return Rest.success(msg, true);

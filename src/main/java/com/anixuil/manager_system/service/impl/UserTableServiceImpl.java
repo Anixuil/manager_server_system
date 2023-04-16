@@ -23,7 +23,6 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
         @Autowired
         private UserTableMapper userTableMapper;
 
-
         //验证用户是否存在
         @Override
         public Boolean verifyUser(UserTable userTable){
@@ -49,4 +48,6 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
             String oldPwd = userInfo.getUserPassword();
             return bCryptPasswordEncoder.matches(currentPwd,oldPwd);
         }
+
+
 }

@@ -77,42 +77,57 @@ public class DictController {
         try{
             //根据字典类型和字典名获取字典 表域用表域的方法 字典用字典的方法
             if(dictType.equals("aln")){
-                //获取字典和相关的字典项
-                List<Map<String,Object>> mapList = dictTableService
-                        .list(
-                                new QueryWrapper<DictTable>()
-                                        .eq("dict_type",dictType)
-                                        .eq("dict_name",dictName)
-                                        .eq("is_delete","0"))
-                        .stream()
-                        .map(dictTable -> {
-                            Map<String,Object> map = new HashMap<>();
-                            map.put("dictUuid",dictTable.getDictUuid());
-                            map.put("dictType",dictTable.getDictType());
-                            map.put("dictName",dictTable.getDictName());
-                            map.put("createDate",dictTable.getCreateDate());
-                            map.put("updateDate",dictTable.getUpdateDate());
-                            map.put("isDelete",dictTable.getIsDelete());
-                            map.put("children",dictFieldTableService
-                                    .list(
-                                            new QueryWrapper<DictFieldTable>()
-                                                    .eq("dict_name",dictName))
-                                    .stream()
-                                    .map(dictFieldTable -> {
-                                        Map<String,Object> map1 = new HashMap<>();
-                                        map1.put("dictFieldUuid",dictFieldTable.getDictFieldUuid());
-                                        map1.put("dictName",dictFieldTable.getDictName());
-                                        map1.put("dictFieldLabel",dictFieldTable.getDictFieldLabel());
-                                        map1.put("dictFieldValue",dictFieldTable.getDictFieldValue());
-                                        return map1;
-                                    }).collect(Collectors.toList()));
-                            return map;
-                        }).collect(Collectors.toList());
-                return Rest.success(msg,mapList);
+                //获取字典项
+                List<DictFieldTable> dictFieldTableList = dictFieldTableService.list(new QueryWrapper<DictFieldTable>().eq("dict_name",dictName));
+                return Rest.success(msg,dictFieldTableList);
+//                //获取字典和相关的字典项
+//                List<Map<String,Object>> mapList = dictTableService
+//                        .list(
+//                                new QueryWrapper<DictTable>()
+//                                        .eq("dict_type",dictType)
+//                                        .eq("dict_name",dictName)
+//                                        .eq("is_delete","0"))
+//                        .stream()
+//                        .map(dictTable -> {
+//                            Map<String,Object> map = new HashMap<>();
+//                            map.put("dictUuid",dictTable.getDictUuid());
+//                            map.put("dictType",dictTable.getDictType());
+//                            map.put("dictName",dictTable.getDictName());
+//                            map.put("createDate",dictTable.getCreateDate());
+//                            map.put("updateDate",dictTable.getUpdateDate());
+//                            map.put("isDelete",dictTable.getIsDelete());
+//                            map.put("children",dictFieldTableService
+//                                    .list(
+//                                            new QueryWrapper<DictFieldTable>()
+//                                                    .eq("dict_name",dictName))
+//                                    .stream()
+//                                    .map(dictFieldTable -> {
+//                                        Map<String,Object> map1 = new HashMap<>();
+//                                        map1.put("dictFieldUuid",dictFieldTable.getDictFieldUuid());
+//                                        map1.put("dictName",dictFieldTable.getDictName());
+//                                        map1.put("dictFieldLabel",dictFieldTable.getDictFieldLabel());
+//                                        map1.put("dictFieldValue",dictFieldTable.getDictFieldValue());
+//                                        return map1;
+//                                    }).collect(Collectors.toList()));
+//                            return map;
+//                        }).collect(Collectors.toList());
+//                return Rest.success(msg,mapList);
             }else if(dictType.equals("table")){
 //                List<Map<String,Object>> mapList = dictTableService.getDict(dictName);
-
-                return Rest.success(msg,"");
+                //根据dictName对应实体类获取对应的字典
+                switch (dictName){
+                    case "depart":
+                        List<DepartTable> departTableList = departTableService.list();
+                        List<Map<String,Object>> mapList = departTableList.stream().map(departTable -> {
+                            Map<String,Object> map = new HashMap<>();
+                            map.put("departUuid",departTable.getDepartUuid());
+                            map.put("departName",departTable.getDepartName());
+                            return map;
+                        }).collect(Collectors.toList());
+                        return Rest.success(msg,mapList);
+                    default:
+                        return Rest.fail(msg,"字典类型错误");
+                }
             }else{
                 return Rest.error(msg,"字典类型错误");
             }

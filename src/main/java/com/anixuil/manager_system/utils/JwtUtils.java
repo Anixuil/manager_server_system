@@ -1,121 +1,81 @@
 package com.anixuil.manager_system.utils;
 
-import com.anixuil.manager_system.entity.Rest;
-import com.anixuil.manager_system.entity.UserTable;
-import io.jsonwebtoken.*;
-import org.apache.tomcat.util.http.MimeHeaders;
-import org.springframework.context.annotation.Configuration;
 
-import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.Field;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
+public class JwtUtils{
+    //有效期
+    public static final long EXPIRE = 60 * 60 * 1000L;
+    //秘钥
+    public static final String SECRETKEY = "anixuil";
 
-@Configuration
-public class JwtUtils {
-    private static String secret = "anixuil";
-
-    private static long expire = 3600000;
-
-    private static String aesKey = "anixuil";
-
-    //生成token
-    public String createToken(Map UserTable){
-        //拿取用户信息
-        String userUuid = UserTable.get("userUuid").toString();
-        String userName = UserTable.get("userName").toString();
-
-        //jwt配置
-        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;   //指定签名算法
-        long nowMillis = System.currentTimeMillis();    //时间
-        Date now = new Date(nowMillis);     //时间
-
-        //创建payload的私有声明
-        Map<String,Object> claims = new HashMap<String,Object>();
-        claims.put("userUuid",userUuid);
-        claims.put("userName",userName);
-
-        Map<String,Object> header = new HashMap();
-        header.put("typ","JWT");
-        header.put("alg","HS256");
-        JwtBuilder builder = Jwts.builder()
-                .setHeader(header)
-                .setId(UUID.randomUUID().toString())
-                .setSubject(String.valueOf(userUuid))
-                .setIssuedAt(now)
-                .setExpiration(new Date(nowMillis + expire))
-                .signWith(signatureAlgorithm,secret)
-                .setClaims(claims);
-
-        //为了避免中间一段base64被解析出来，这里进行了aes二次加密
-        String token = builder.compact();
-        //返回二次加密的token
-        return AESUtil.encrypt(token,aesKey);
-
+    public static String getUUID(){
+        return UUID.randomUUID().toString().replace("-", "");
     }
 
-//    校验token
-    public static Rest verifyToken(HttpServletRequest httpServletRequest, String token){
-        String msg = "token验证";
-        try{
-            //先进行二次解密获取原来的token
-            String aesToken = AESUtil.decrypt(token,aesKey);
-            //指定签名算法
-            SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-            //得到
-//            Claims claims = Jwts.parser()
-//                    .setSigningKey(secret)
-//                    .parseClaimsJws(aesToken).getBody();
-
-//            System.out.println(claims);
-            //验证成功后 将解密的token设置到request中的header中去
-            reflectSetTokenValue(httpServletRequest,"token",aesToken);
-            return Rest.success(msg,true);
-        } catch (Exception e){
-            return Rest.error(msg,e);
-        }
+    //生成jwt
+    public static String createJWT(String subject){
+        JwtBuilder builder = getJwtBuilder(subject,null,getUUID());//设置过期时间
+        return builder.compact();
     }
 
-    //解析token
-    public static Claims parseJWT(String token){
-        try{
-            //先进行二次解密获取原来的token
-            String aesToken = AESUtil.decrypt(token,aesKey);
-//            指定签名算法
-            SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
-            //得到
-            Claims claims = Jwts.parser()
-                    .setSigningKey(secret)
-                    .parseClaimsJws(aesToken).getBody();
-
-            System.out.println(claims);
-            return claims;
-        } catch (Exception e){
-            System.out.println(e);
-        }
-        return null;
+    //生成jwt
+    public static String createJWT(String subject, long ttlMillis){
+        JwtBuilder builder = getJwtBuilder(subject,ttlMillis,getUUID());//设置过期时间
+        return builder.compact();
     }
 
-    private static void reflectSetTokenValue(HttpServletRequest request,String key,String value){
-        Class<? extends HttpServletRequest> requestClass = request.getClass();
-        try{
-            Field request1 = requestClass.getDeclaredField("request");
-            request1.setAccessible(true);
-            Object o = request1.get(request);
-            Field coyoteRequest = o.getClass().getDeclaredField("coyoteRequest");
-            coyoteRequest.setAccessible(true);
-            Object o1 = coyoteRequest.get(o);
-            Field headers = o1.getClass().getDeclaredField("headers");
-            headers.setAccessible(true);
-            MimeHeaders o2 = (MimeHeaders)headers.get(o1);
-            //将AES格式的token替换成JWT格式token
-            o2.getValue(key).setString(value);
-        } catch (Exception e) {
-            e.printStackTrace();
+    private static JwtBuilder getJwtBuilder(String subject, Long ttlMillis, String uuid){
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+        SecretKey secretKey = generalKey();
+        long nowMillis = System.currentTimeMillis();
+        Date now = new Date(nowMillis);
+        if(ttlMillis == null){
+            ttlMillis = EXPIRE;
         }
+        long expMillis = nowMillis + ttlMillis;
+        Date expDate = new Date(expMillis);
+        return Jwts.builder()
+                .setId(uuid)                            //唯一的id
+                .setSubject(subject)                    //主题 可以是JSON数据
+                .setIssuer("anixuil")                   //签名是有谁生成 例如 服务器
+                .setIssuedAt(now)                       //签发时间
+                .signWith(signatureAlgorithm, secretKey)//签名算法以及密匙
+                .setExpiration(expDate);                //设置过期时间
+    }
+
+    //创建token
+    public static String createJWT(String id,String subject,long ttlMillis){
+        JwtBuilder builder = getJwtBuilder(subject,ttlMillis,id);//设置过期时间
+        return builder.compact();
+    }
+
+//    public static void main(String[] args) throws Exception{
+//        String jwt = createJWT("liuxin");
+//        System.out.println(parseJWT(jwt));
+//    }
+
+    //生成加密的密钥secretKey
+    public static SecretKey generalKey(){
+        byte[] encodedKey = Base64.getDecoder().decode(JwtUtils.SECRETKEY);
+        SecretKey key = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
+        return key;
+    }
+
+    //解析jwt
+    public static Claims parseJWT(String jwt) throws Exception{
+        SecretKey secretKey = generalKey();
+        return Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(jwt).getBody();
     }
 }
-
