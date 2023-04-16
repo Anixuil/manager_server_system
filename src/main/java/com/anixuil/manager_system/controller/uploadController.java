@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,21 +20,21 @@ import java.util.List;
 @RequestMapping("publicfile")
 public class uploadController {
 
-    @Autowired
+    @Resource
     DepartTableService departTableService;
-    @Autowired
+    @Resource
     UserTableService UserTableService;
-    @Autowired
+    @Resource
     CandidateTableService candidateTableService;
-    @Autowired
+    @Resource
     ClassTableService classTableService;
-    @Autowired
+    @Resource
     ExamClassTableService examClassTableService;
-    @Autowired
+    @Resource
     MajorTableService majorTableService;
-    @Autowired
+    @Resource
     StudentTableService studentTableService;
-    @Autowired
+    @Resource
     TeacherTableService teacherTableService;
 
     //excel表格导入

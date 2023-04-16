@@ -1,13 +1,23 @@
 package com.anixuil.manager_system.service.impl;
 
+import com.anixuil.manager_system.entity.Rest;
+import com.anixuil.manager_system.entity.UserDetail;
 import com.anixuil.manager_system.entity.UserTable;
 import com.anixuil.manager_system.mapper.UserTableMapper;
 import com.anixuil.manager_system.service.UserTableService;
+import com.anixuil.manager_system.utils.JwtUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -22,6 +32,31 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
 
         @Autowired
         private UserTableMapper userTableMapper;
+
+        @Autowired
+        private AuthenticationManager authenticationManager;
+
+        //用户登录
+        @Override
+        public Rest login(UserTable userTable){
+            String msg = "用户登录";
+            try{
+                //authentication 进行用户验证
+                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userTable.getUserName(), userTable.getUserPassword());
+                Authentication authenticate = authenticationManager.authenticate(authenticationToken);
+                if(Objects.isNull(authenticate)){
+                    return Rest.fail(msg,"验证失败");
+                }
+//            如果认证通过了，使用userId生成一个Jwt
+                UserDetail userDetail = (UserDetail) authenticate.getPrincipal();
+                String token = JwtUtils.createJWT(userDetail.getUserUuid());
+                Map<String, Object> map = new HashMap<>();
+                map.put("token",token);
+                return Rest.success(msg, map);
+            }catch (Exception e){
+                return Rest.error(msg,e);
+            }
+        }
 
         //验证用户是否存在
         @Override

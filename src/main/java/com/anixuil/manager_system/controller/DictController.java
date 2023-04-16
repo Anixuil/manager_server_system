@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +22,11 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("dict")
 public class DictController {
-    @Autowired
+    @Resource
     DepartTableService departTableService;
-    @Autowired
+    @Resource
     DictTableService dictTableService;
-    @Autowired
+    @Resource
     DictFieldTableService dictFieldTableService;
 
     //获取院系字典

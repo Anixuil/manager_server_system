@@ -15,6 +15,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,11 +24,11 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("major")
 public class majorController {
-    @Autowired
+    @Resource
     MajorTableService majorTableService;
-    @Autowired
+    @Resource
     StudentTableService studentTableService;
-    @Autowired
+    @Resource
     DepartTableService departTableService;
 
     //新增专业
