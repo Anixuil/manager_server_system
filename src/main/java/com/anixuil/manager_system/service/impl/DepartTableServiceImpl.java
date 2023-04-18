@@ -9,6 +9,7 @@ import com.anixuil.manager_system.service.DepartTableService;
 import com.anixuil.manager_system.service.MajorTableService;
 import com.anixuil.manager_system.service.StudentTableService;
 import com.anixuil.manager_system.utils.Datetime;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -44,8 +45,8 @@ public class DepartTableServiceImpl extends ServiceImpl<DepartTableMapper, Depar
         try{
             IPage<DepartTable> page = new Page<>(pageNum,pageSize);
             //分页查询 用stream流来弄出一个list 里面是所有的院系数据 用map来弄出一个list 里面是所有的专业数据 专业数据里添加一个字段 studentCount 用来存放专业下的学生数量
-            QueryWrapper queryWrapper = new QueryWrapper();
-            queryWrapper.select("depart_uuid","depart_name","depart_intro","create_date","update_date","is_delete");
+            LambdaQueryWrapper<DepartTable> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.select(DepartTable::getDepartUuid,DepartTable::getDepartName,DepartTable::getDepartIntro,DepartTable::getCreateDate,DepartTable::getUpdateDate,DepartTable::getIsDelete);
             IPage<DepartTable> departTableIPage = this.page(page, queryWrapper);
             List<DepartTable> departTableList = departTableIPage.getRecords();
             List<Map<String,Object>> mapList = departTableList.stream().map(departTable -> {
@@ -57,8 +58,8 @@ public class DepartTableServiceImpl extends ServiceImpl<DepartTableMapper, Depar
                 map.put("createDate", Datetime.format(departTable.getCreateDate()));
                 map.put("updateDate",Datetime.format(departTable.getUpdateDate()));
                 map.put("isDelete",departTable.getIsDelete());
-                map.put("majorCount",majorTableService.count(new QueryWrapper<MajorTable>().eq("depart_uuid",departTable.getDepartUuid())));
-                map.put("majorList",majorTableService.list(new QueryWrapper<MajorTable>().eq("depart_uuid",departTable.getDepartUuid())).stream().map(majorTable -> {
+                map.put("majorCount",majorTableService.count(new LambdaQueryWrapper<MajorTable>().eq(MajorTable::getDepartUuid,departTable.getDepartUuid())));
+                map.put("majorList",majorTableService.list(new LambdaQueryWrapper<MajorTable>().eq(MajorTable::getDepartUuid,departTable.getDepartUuid())).stream().map(majorTable -> {
                     Map<String,Object> majorMap = new HashMap<>();
                     majorMap.put("majorUuid",majorTable.getMajorUuid());
                     majorMap.put("majorName",majorTable.getMajorName());
@@ -67,7 +68,7 @@ public class DepartTableServiceImpl extends ServiceImpl<DepartTableMapper, Depar
                     majorMap.put("createDate", Datetime.format(majorTable.getCreateDate()));
                     majorMap.put("updateDate",Datetime.format(majorTable.getUpdateDate()));
                     majorMap.put("isDelete",majorTable.getIsDelete());
-                    majorMap.put("studentCount",studentTableService.count(new QueryWrapper<StudentTable>().eq("major_uuid",majorTable.getMajorUuid())));
+                    majorMap.put("studentCount",studentTableService.count(new LambdaQueryWrapper<StudentTable>().eq(StudentTable::getMajorUuid,majorTable.getMajorUuid())));
                     return majorMap;
                 }).collect(Collectors.toList()));
                 return map;

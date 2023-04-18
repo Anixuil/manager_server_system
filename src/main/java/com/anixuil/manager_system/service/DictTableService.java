@@ -1,6 +1,7 @@
 package com.anixuil.manager_system.service;
 
 import com.anixuil.manager_system.entity.DictTable;
+import com.anixuil.manager_system.entity.Rest;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -16,5 +17,9 @@ import java.util.Map;
  */
 public interface DictTableService extends IService<DictTable> {
 
-//    List<Map<String, Object>> getDict(String dictName);
+    //新增字典
+    Rest addDict(DictTable dictTable);
+
+    //获取字典
+    Rest getDict(String dictType,String dictName);
 }

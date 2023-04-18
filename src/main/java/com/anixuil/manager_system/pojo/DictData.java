@@ -1,4 +1,4 @@
-package com.anixuil.manager_system.Pojo;
+package com.anixuil.manager_system.pojo;
 
 import com.anixuil.manager_system.entity.DictFieldTable;
 import com.anixuil.manager_system.entity.DictTable;

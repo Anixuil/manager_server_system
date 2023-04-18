@@ -3,7 +3,6 @@ package com.anixuil.manager_system.service.impl;
 import com.anixuil.manager_system.entity.UserDetail;
 import com.anixuil.manager_system.entity.UserTable;
 import com.anixuil.manager_system.mapper.UserTableMapper;
-import com.anixuil.manager_system.service.UserTableService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
