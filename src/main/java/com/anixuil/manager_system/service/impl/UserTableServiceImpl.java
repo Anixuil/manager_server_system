@@ -6,13 +6,13 @@ import com.anixuil.manager_system.entity.UserTable;
 import com.anixuil.manager_system.mapper.UserTableMapper;
 import com.anixuil.manager_system.service.UserTableService;
 import com.anixuil.manager_system.utils.JwtUtils;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -58,7 +58,43 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
             }
         }
 
-        //验证用户是否存在
+    @Override
+    public Rest register(UserTable userTable) {
+        return null;
+    }
+
+    //获取当前用户信息
+    @Override
+    public Rest getUserInfo(String token) {
+        String msg = "获取用户信息";
+        try{
+            JwtUtils jwtUtils = new JwtUtils();
+            String userUuid = jwtUtils.parseJWT(token).getSubject();
+            UserTable userTable = userTableMapper.selectOne(
+                    new LambdaQueryWrapper<UserTable>().eq(UserTable::getUserUuid,userUuid)
+            );
+            Map<String,Object> info = new HashMap<>();
+            info.put("user_uuid",userTable.getUserUuid());
+            info.put("user_name",userTable.getUserName());
+            info.put("user_email",userTable.getUserEmail());
+            info.put("user_phone",userTable.getUserPhone());
+            info.put("user_role",userTable.getUserRole());
+            info.put("user_age",userTable.getUserAge());
+            info.put("user_gender",userTable.getUserGender());
+            info.put("create_date",userTable.getCreateDate());
+            info.put("update_date",userTable.getUpdateDate());
+            Map<String,Object> data = new HashMap<>();
+            data.put("userInfo",info);
+            if(userUuid != null){
+                return Rest.success(msg,data);
+            }
+            return Rest.fail(msg,null);
+        }catch (Exception e){
+            return Rest.error(msg,e);
+        }
+    }
+
+    //验证用户是否存在
         @Override
         public Boolean verifyUser(UserTable userTable){
             QueryWrapper<UserTable> wrapper = new QueryWrapper<>();
@@ -67,22 +103,10 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
             return userTableMapper.selectCount(wrapper) > 0;
         }
 
-        //验证密码是否正确
-        @Override
-        public Boolean verifyPwd(UserTable userTable){
-            //实例化加密模块
-            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-            //拿到用户当前输入的密码
-            String currentPwd = userTable.getUserPassword();
-            //对用户进行查询并拿到用户信息
-            QueryWrapper<UserTable> wrapper = new QueryWrapper<>();
-            //查询条件
-            wrapper.eq("user_name",userTable.getUserName());
-            //查询结果
-            UserTable userInfo = userTableMapper.selectOne(wrapper);
-            String oldPwd = userInfo.getUserPassword();
-            return bCryptPasswordEncoder.matches(currentPwd,oldPwd);
-        }
+    @Override
+    public Boolean verifyPwd(UserTable userTable) {
+        return null;
+    }
 
 
 }

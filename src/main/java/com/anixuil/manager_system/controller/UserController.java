@@ -13,6 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -21,12 +22,6 @@ import java.util.Objects;
 public class UserController {
     @Resource
     UserTableService userTableService;
-
-    @Resource
-    private AuthenticationManager authenticationManager;
-
-
-//    private RedisCache redisCache;
 
     //注册
     @PostMapping("register")
@@ -59,17 +54,6 @@ public class UserController {
     //从token中获取用户信息
     @GetMapping("getUserInfo")
     public Rest getUserInfo(@RequestHeader("token") String token){
-        String msg = "获取用户信息";
-        try{
-            JwtUtils jwtUtils = new JwtUtils();
-            System.out.println(token);
-            Map<String,Object> info = jwtUtils.parseJWT(token);
-            if(info != null){
-                return Rest.success(msg,info);
-            }
-            return Rest.fail(msg,null);
-        }catch (Exception e){
-            return Rest.error(msg,e);
-        }
+        return userTableService.getUserInfo(token);
     }
 }

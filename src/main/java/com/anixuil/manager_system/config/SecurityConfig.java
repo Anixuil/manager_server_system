@@ -33,7 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 //放行登录接口
-                .antMatchers("/user/login").anonymous()
+                .antMatchers("/user/login","/user/register").anonymous()
                 //其他接口需要认证
                 .anyRequest().authenticated();
 

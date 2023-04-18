@@ -16,6 +16,13 @@ public interface UserTableService extends IService<UserTable> {
 
     //用户登录
     Rest login(UserTable userTable);
+
+    //用户注册
+    Rest register(UserTable userTable);
+
+    //获取用户信息
+    Rest getUserInfo(String token);
+
     //验证用户是否存在
     Boolean verifyUser(UserTable userTable);
 
