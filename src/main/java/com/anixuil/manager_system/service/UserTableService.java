@@ -26,6 +26,7 @@ public interface UserTableService extends IService<UserTable> {
     //验证用户是否存在
     Boolean verifyUser(UserTable userTable);
 
-    //验证密码是否正确
-    Boolean verifyPwd(UserTable userTable);
+
+    //修改密码
+    Rest updatePwd(UserTable userTable);
 }

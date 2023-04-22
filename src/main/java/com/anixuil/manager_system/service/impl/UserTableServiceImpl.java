@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -95,17 +96,31 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
     }
 
     //验证用户是否存在
-        @Override
-        public Boolean verifyUser(UserTable userTable){
-            QueryWrapper<UserTable> wrapper = new QueryWrapper<>();
-            wrapper.eq("user_name",userTable.getUserName());
-
-            return userTableMapper.selectCount(wrapper) > 0;
-        }
-
     @Override
-    public Boolean verifyPwd(UserTable userTable) {
-        return null;
+    public Boolean verifyUser(UserTable userTable){
+        QueryWrapper<UserTable> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_name",userTable.getUserName());
+        return userTableMapper.selectCount(wrapper) > 0;
+    }
+
+    //修改密码
+    @Override
+    public Rest updatePwd(UserTable userTable) {
+        String msg = "修改密码";
+        try{
+            if(verifyUser(userTable)){
+                String password = userTable.getUserPassword();
+                //加密
+                BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+                password = bCryptPasswordEncoder.encode(password);
+                userTable.setUserPassword(password);
+                userTableMapper.update(userTable,new LambdaQueryWrapper<UserTable>().eq(UserTable::getUserUuid,userTable.getUserUuid()));
+                return Rest.success(msg,null);
+            }
+            return Rest.fail(msg,null);
+        }catch (Exception e){
+            return Rest.error(msg,e);
+        }
     }
 
 

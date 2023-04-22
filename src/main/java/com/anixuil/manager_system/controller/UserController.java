@@ -56,4 +56,10 @@ public class UserController {
     public Rest getUserInfo(@RequestHeader("token") String token){
         return userTableService.getUserInfo(token);
     }
+
+    //修改密码
+    @PutMapping("updatePwd")
+    public Rest updatePwd(@RequestBody UserTable userTable){
+        return userTableService.updatePwd(userTable);
+    }
 }
