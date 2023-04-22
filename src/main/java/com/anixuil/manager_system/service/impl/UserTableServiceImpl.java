@@ -74,15 +74,15 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                     new LambdaQueryWrapper<UserTable>().eq(UserTable::getUserUuid,userUuid)
             );
             Map<String,Object> info = new HashMap<>();
-            info.put("user_uuid",userTable.getUserUuid());
-            info.put("user_name",userTable.getUserName());
-            info.put("user_email",userTable.getUserEmail());
-            info.put("user_phone",userTable.getUserPhone());
-            info.put("user_role",userTable.getUserRole());
-            info.put("user_age",userTable.getUserAge());
-            info.put("user_gender",userTable.getUserGender());
-            info.put("create_date",userTable.getCreateDate());
-            info.put("update_date",userTable.getUpdateDate());
+            info.put("userUuid",userTable.getUserUuid());
+            info.put("userName",userTable.getUserName());
+            info.put("userEmail",userTable.getUserEmail());
+            info.put("userPhone",userTable.getUserPhone());
+            info.put("userRole",userTable.getUserRole());
+            info.put("userAge",userTable.getUserAge());
+            info.put("userGender",userTable.getUserGender());
+            info.put("createDate",userTable.getCreateDate());
+            info.put("updateDate",userTable.getUpdateDate());
             Map<String,Object> data = new HashMap<>();
             data.put("userInfo",info);
             if(userUuid != null){
