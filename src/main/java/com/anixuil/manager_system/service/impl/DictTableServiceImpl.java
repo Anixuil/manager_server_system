@@ -1,13 +1,12 @@
 package com.anixuil.manager_system.service.impl;
 
-import com.anixuil.manager_system.entity.DepartTable;
-import com.anixuil.manager_system.entity.DictFieldTable;
-import com.anixuil.manager_system.entity.DictTable;
-import com.anixuil.manager_system.entity.Rest;
+import com.anixuil.manager_system.entity.*;
 import com.anixuil.manager_system.mapper.DictFieldTableMapper;
 import com.anixuil.manager_system.mapper.DictTableMapper;
+import com.anixuil.manager_system.service.ClassTableService;
 import com.anixuil.manager_system.service.DepartTableService;
 import com.anixuil.manager_system.service.DictTableService;
+import com.anixuil.manager_system.service.MajorTableService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -37,6 +36,12 @@ public class DictTableServiceImpl extends ServiceImpl<DictTableMapper, DictTable
 
     @Resource
     DepartTableService departTableService;
+
+    @Resource
+    ClassTableService classTableService;
+
+    @Resource
+    MajorTableService majorTableService;
 
     //新增字典
     @Override
@@ -72,13 +77,31 @@ public class DictTableServiceImpl extends ServiceImpl<DictTableMapper, DictTable
                 switch (dictName){
                     case "depart":
                         List<DepartTable> departTableList = departTableService.list();
-                        List<Map<String,Object>> mapList = departTableList.stream().map(departTable -> {
+                        List<Map<String,Object>> departMapList = departTableList.stream().map(departTable -> {
                             Map<String,Object> map = new HashMap<>();
                             map.put("departUuid",departTable.getDepartUuid());
                             map.put("departName",departTable.getDepartName());
                             return map;
                         }).collect(Collectors.toList());
-                        return Rest.success(msg,mapList);
+                        return Rest.success(msg,departMapList);
+                    case "class":
+                        List<ClassTable> classTableList = classTableService.list();
+                        List<Map<String,Object>> classMapList = classTableList.stream().map(classTable -> {
+                            Map<String,Object> map = new HashMap<>();
+                            map.put("classUuid",classTable.getClassUuid());
+                            map.put("className",classTable.getClassName());
+                            return map;
+                        }).collect(Collectors.toList());
+                        return Rest.success(msg,classMapList);
+                    case "major":
+                        List<MajorTable> majorTableList = majorTableService.list();
+                        List<Map<String,Object>> majorMapList = majorTableList.stream().map(majorTable -> {
+                            Map<String,Object> map = new HashMap<>();
+                            map.put("majorUuid",majorTable.getMajorUuid());
+                            map.put("majorName",majorTable.getMajorName());
+                            return map;
+                        }).collect(Collectors.toList());
+                        return Rest.success(msg,majorMapList);
                     default:
                         return Rest.fail(msg,"字典类型错误");
                 }
