@@ -14,7 +14,9 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("publicfile")
@@ -93,8 +95,7 @@ public class uploadController {
     public Rest upload(@RequestBody MultipartFile file){
         String msg = "上传文件";
         try{
-            Rest result = saveFile(file,msg);
-            return result;
+            return saveFile(file,msg);
         }catch (Exception e){
             return Rest.error(msg,e);
         }
@@ -109,6 +110,20 @@ public class uploadController {
             result.add(saveFile(file,msg));
         }
         return Rest.success(msg,result);
+    }
+
+    //富文本上传
+    @PostMapping("editorUpload")
+    public Map<String,Object> editorUpload(@RequestBody MultipartFile file){
+        String msg = "上传文件";
+        try{
+            return saveTextFile(file,msg);
+        }catch (Exception e){
+            Map<String,Object> result = new HashMap<String,Object>();
+            result.put("errno",1);
+            result.put("message","上传失败");
+            return result;
+        }
     }
 
 
@@ -132,6 +147,39 @@ public class uploadController {
         }catch (IOException e){
             e.printStackTrace();
             return Rest.fail(msg,e);
+        }
+    }
+
+    //富文本上传
+    private Map<String,Object> saveTextFile(MultipartFile file,String msg) {
+        Map<String, Object> result = new HashMap<String, Object>();
+        if (file.isEmpty()) {
+            result.put("errno", 1);
+            result.put("message", "未检测到文件");
+            return result;
+        }
+        String filePath = "D:/code/java/public/";
+        String fileName = file.getOriginalFilename();   //获取上传文件原名称
+        File temp = new File(filePath);
+        if (!temp.exists()) {
+            temp.mkdirs();
+        }
+
+        File localFile = new File(filePath + fileName);
+        try {
+            file.transferTo(localFile); //把上传的文件保存到本地
+            result.put("errno", 0);
+            Map<String, Object> data = new HashMap<String, Object>();
+            data.put("url", "http://localhost:8080/anixuil/public/" + fileName);
+            data.put("alt", fileName);
+            data.put("href", "http://localhost:8080/anixuil/public/" + fileName);
+            result.put("data", data);
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+            result.put("errno", 1);
+            result.put("message", e);
+            return result;
         }
     }
 }

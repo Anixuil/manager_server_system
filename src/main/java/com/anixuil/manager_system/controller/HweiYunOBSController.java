@@ -17,7 +17,9 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("file")
@@ -34,6 +36,26 @@ public class HweiYunOBSController {
         }
         final String result = hweiYunOBSService.fileUpload(file,file.getOriginalFilename()) + "?x-image-process=style/image-style";
         return Rest.success(msg,result);
+    }
+
+    //富文本上传
+    @PostMapping("uploadEditor")
+    public Object uploadEditor(@RequestParam(value = "file",required = false) MultipartFile file){
+        String msg = "上传";
+        Map<String,Object> returnResult = new HashMap<>();
+        if(file.isEmpty()){
+            returnResult.put("errno",1);
+            returnResult.put("message","文件为空");
+            return returnResult;
+        }
+        final String result = hweiYunOBSService.fileUpload(file,file.getOriginalFilename()) + "?x-image-process=style/image-style";
+        returnResult.put("errno",0);
+        Map<String,Object> map = new HashMap<>();
+        map.put("url",result);
+        map.put("alt",file.getOriginalFilename());
+        map.put("href",result);
+        returnResult.put("data",map);
+        return returnResult;
     }
 
     // 删除
