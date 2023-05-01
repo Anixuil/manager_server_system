@@ -43,6 +43,10 @@ public class ExamClassTable implements Serializable {
     @ExcelProperty("考试科目描述")
     private String examClassDesc;
 
+    @TableField("exam_type")
+    @ExcelProperty("考试类型")
+    private String examType;
+
     @TableField(value = "create_date", fill = FieldFill.INSERT)
     @ExcelProperty("创建时间")
     private Timestamp createDate;
