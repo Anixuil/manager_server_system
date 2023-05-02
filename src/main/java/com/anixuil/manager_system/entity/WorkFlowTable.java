@@ -1,8 +1,8 @@
 package com.anixuil.manager_system.entity;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.io.Serializable;
 import java.sql.Timestamp;
 
@@ -27,7 +27,7 @@ public class WorkFlowTable implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId("work_flow_uuid")
+    @TableId(value="work_flow_uuid",type= IdType.ASSIGN_UUID)
     private String workFlowUuid;
 
     @TableField("work_flow_title")
@@ -42,10 +42,15 @@ public class WorkFlowTable implements Serializable {
     @TableField("work_flow_index")
     private Integer workFlowIndex;
 
-    @TableField("create_date")
+    @TableField("work_flow_status")
+    private String workFlowStatus;
+
+    @TableField(value = "create_date", fill = FieldFill.INSERT)
+    @ExcelProperty("创建时间")
     private Timestamp createDate;
 
-    @TableField("update_date")
+    @TableField(value = "update_date", fill = FieldFill.INSERT_UPDATE)
+    @ExcelProperty("更新时间")
     private Timestamp updateDate;
 
     @TableField("is_delete")

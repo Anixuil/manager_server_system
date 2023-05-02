@@ -96,7 +96,6 @@ public class MajorTableServiceImpl extends ServiceImpl<MajorTableMapper, MajorTa
             IPage<MajorTable> page = new Page<>(pageNum,pageSize);
             //分页查询 用stream流来弄出一个list 里面是所有的专业数据 用map来弄出一个list 里面是所有的专业数据 专业数据里添加一个字段 studentCount 用来存放专业下的学生数量
             LambdaQueryWrapper<MajorTable> queryWrapper = new LambdaQueryWrapper<>();
-//            QueryWrapper queryWrapper = new QueryWrapper();
             queryWrapper.select(MajorTable::getMajorUuid,MajorTable::getMajorName,MajorTable::getMajorIntro,MajorTable::getDepartUuid,MajorTable::getCreateDate,MajorTable::getUpdateDate,MajorTable::getIsDelete);
             IPage<MajorTable> majorTableIPage = this.page(page, queryWrapper);
             List<MajorTable> majorTableList = majorTableIPage.getRecords();

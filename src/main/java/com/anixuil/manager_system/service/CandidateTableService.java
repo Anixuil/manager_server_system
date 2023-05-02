@@ -1,6 +1,8 @@
 package com.anixuil.manager_system.service;
 
 import com.anixuil.manager_system.entity.CandidateTable;
+import com.anixuil.manager_system.entity.Rest;
+import com.anixuil.manager_system.pojo.UserAll;
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.stereotype.Service;
 
@@ -14,5 +16,12 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public interface CandidateTableService extends IService<CandidateTable> {
+    //添加考生
+    Boolean addCandidate(UserAll user);
 
+    //删除考生
+    Boolean deleteCandidate(CandidateTable candidateTable);
+
+    //修改考生信息
+    Rest updateCandidate(CandidateTable candidateTable);
 }
