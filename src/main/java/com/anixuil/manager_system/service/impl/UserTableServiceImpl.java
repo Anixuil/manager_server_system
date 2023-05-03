@@ -158,6 +158,10 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                 info.put("candidateId",candidateTable.getCandidateId());
                 info.put("candidateStatus",candidateTable.getCandidateStatus());
                 info.put("examPlace",candidateTable.getExamPlace());
+                info.put("firstScore",candidateTable.getFirstScore());
+                info.put("secondScore",candidateTable.getSecondScore());
+                info.put("thirdScore",candidateTable.getThirdScore());
+                info.put("confirmStatus",candidateTable.getConfirmStatus());
             }
             if(role.equals("teacher")){
                 LambdaQueryWrapper<TeacherTable> wrapper = new LambdaQueryWrapper<>();
@@ -386,6 +390,7 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                 map.put("firstScore",userAll.getFirstScore());
                 map.put("secondScore",userAll.getSecondScore());
                 map.put("thirdScore",userAll.getThirdScore());
+                map.put("confirmStatus",userAll.getConfirmStatus());
                 return map;
             }).collect(Collectors.toList());
             Map<String,Object> map = new HashMap<>();
@@ -424,6 +429,7 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                 candidateTable.setFirstScore(userAll.getFirstScore());
                 candidateTable.setSecondScore(userAll.getSecondScore());
                 candidateTable.setThirdScore(userAll.getThirdScore());
+                candidateTable.setConfirmStatus(userAll.getConfirmStatus());
                 result = candidateTableService.updateById(candidateTable);
                 if(result){
                     return Rest.success(msg,true);

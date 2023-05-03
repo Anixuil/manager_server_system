@@ -39,6 +39,7 @@ public class CandidateTableServiceImpl extends ServiceImpl<CandidateTableMapper,
             candidateTable.setMajorUuid(user.getMajorUuid());
             candidateTable.setCandidateStatus(user.getCandidateStatus());
             candidateTable.setExamPlace(user.getExamPlace());
+            candidateTable.setConfirmStatus(user.getConfirmStatus());
            return save(candidateTable);
         }catch (Exception e) {
             return false;

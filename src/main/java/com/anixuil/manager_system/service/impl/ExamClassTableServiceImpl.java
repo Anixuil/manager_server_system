@@ -82,11 +82,8 @@ public class ExamClassTableServiceImpl extends ServiceImpl<ExamClassTableMapper,
         try{
             int pageNum = Integer.parseInt(params.get("pageNum").toString());
             int pageSize = Integer.parseInt(params.get("pageSize").toString());
-            System.out.println(params.get("majorUuid"));
             String majorUuid = params.get("majorUuid") == null ? "" : params.get("majorUuid").toString();
             String examClassName = params.get("examClassName") == null ? "" : params.get("examClassName").toString();
-            System.out.println("majorUuid:"+majorUuid);
-            System.out.println("examClassName:"+examClassName);
             IPage<ExamClassTable> page = new Page<>(pageNum,pageSize);
             LambdaQueryWrapper<ExamClassTable> wrapper = new LambdaQueryWrapper<>();
             wrapper.select(ExamClassTable::getExamClassUuid,ExamClassTable::getExamClassName,ExamClassTable::getMajorUuid,ExamClassTable::getExamClassDesc,ExamClassTable::getExamType,ExamClassTable::getCreateDate,ExamClassTable::getUpdateDate,ExamClassTable::getIsDelete)

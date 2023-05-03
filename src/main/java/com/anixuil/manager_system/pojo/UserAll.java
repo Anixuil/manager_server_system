@@ -18,6 +18,20 @@ public class UserAll {
     private String teacherUuid;
     private String userPassword;
 
+    public String getConfirmStatus() {
+        return confirmStatus;
+    }
+
+    public void setConfirmStatus(String confirmStatus) {
+        this.confirmStatus = confirmStatus;
+    }
+
+    public void setGraduationDate(String graduationDate) {
+        this.graduationDate = graduationDate;
+    }
+
+    private String confirmStatus;
+
     public String getUserPassword() {
         return userPassword;
     }

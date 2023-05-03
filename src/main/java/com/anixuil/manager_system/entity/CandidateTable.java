@@ -63,6 +63,10 @@ public class CandidateTable implements Serializable {
     @ExcelProperty("调剂成绩")
     private Double thirdScore;
 
+    @TableField("confirm_status")
+    @ExcelProperty("确认状态")
+    private String confirmStatus;
+
     @TableField(value = "create_date", fill = FieldFill.INSERT)
     @ExcelProperty("创建时间")
     private Timestamp createDate;
