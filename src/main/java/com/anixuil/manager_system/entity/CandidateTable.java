@@ -51,6 +51,18 @@ public class CandidateTable implements Serializable {
     @ExcelProperty("考试地点")
     private String examPlace;
 
+    @TableField("first_score")
+    @ExcelProperty("初试成绩")
+    private Double firstScore;
+
+    @TableField("second_score")
+    @ExcelProperty("复试成绩")
+    private Double secondScore;
+
+    @TableField("third_score")
+    @ExcelProperty("调剂成绩")
+    private Double thirdScore;
+
     @TableField(value = "create_date", fill = FieldFill.INSERT)
     @ExcelProperty("创建时间")
     private Timestamp createDate;

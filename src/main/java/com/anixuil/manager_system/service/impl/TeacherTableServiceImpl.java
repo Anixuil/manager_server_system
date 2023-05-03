@@ -27,10 +27,10 @@ public class TeacherTableServiceImpl extends ServiceImpl<TeacherTableMapper, Tea
     public Boolean addTeacher(UserAll user) {
         try{
             TeacherTable teacherTable = new TeacherTable();
-            if(user.getTeacheId() == null) {
+            if(user.getTeacherId().isEmpty()){
                 teacherTable.setTeacherId(String.valueOf(new Date().getTime()));
             }else{
-                teacherTable.setTeacherId(user.getTeacheId());
+                teacherTable.setTeacherId(user.getTeacherId());
             }
             teacherTable.setUserUuid(user.getUserUuid());
             teacherTable.setDepartUuid(user.getDepartUuid());

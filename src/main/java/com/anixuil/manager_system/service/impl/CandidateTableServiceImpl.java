@@ -1,15 +1,19 @@
 package com.anixuil.manager_system.service.impl;
 
-import com.anixuil.manager_system.entity.CandidateTable;
-import com.anixuil.manager_system.entity.Rest;
+import com.anixuil.manager_system.entity.*;
 import com.anixuil.manager_system.mapper.CandidateTableMapper;
 import com.anixuil.manager_system.pojo.UserAll;
 import com.anixuil.manager_system.service.CandidateTableService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <p>
@@ -26,13 +30,15 @@ public class CandidateTableServiceImpl extends ServiceImpl<CandidateTableMapper,
     public Boolean addCandidate(UserAll user) {
         try{
             CandidateTable candidateTable = new CandidateTable();
-            if(user.getCandidateId() == null) {
+            if(user.getCandidateId().isEmpty()) {
                 candidateTable.setCandidateId(String.valueOf(new Date().getTime()));
             }else{
                 candidateTable.setCandidateId(user.getCandidateId());
             }
             candidateTable.setUserUuid(user.getUserUuid());
             candidateTable.setMajorUuid(user.getMajorUuid());
+            candidateTable.setCandidateStatus(user.getCandidateStatus());
+            candidateTable.setExamPlace(user.getExamPlace());
            return save(candidateTable);
         }catch (Exception e) {
             return false;

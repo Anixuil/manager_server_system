@@ -35,4 +35,22 @@ public interface UserTableService extends IService<UserTable> {
 
     //删除用户
     Rest deleteUser(UserTable userTable);
+
+    //获取考生列表
+    Rest getCandidateList(Integer pageNum,Integer pageSize,String userUuid,String userName,String userPhone,String userEmail,String majorUuid,String candidateId,String candidateStatus,String examPlace);
+
+    //获取学生列表
+    Rest getStudentList(Integer pageNum,Integer pageSize,String userUuid,String userName,String userPhone,String userEmail,String majorUuid,String studentId);
+
+    //获取教师列表
+    Rest getTeacherList(Integer pageNum,Integer pageSize,String userUuid,String userName,String userPhone,String userEmail,String teacherId,String departUuid,String classUuid);
+
+    //修改考生信息
+    Rest updateCandidate(UserAll user);
+
+    //修改学生信息
+    Rest updateStudent(UserAll user);
+
+    //修改教师信息
+    Rest updateTeacher(UserAll user);
 }

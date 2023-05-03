@@ -1,5 +1,7 @@
 package com.anixuil.manager_system.pojo;
 
+import java.sql.Timestamp;
+
 public class UserAll {
     private String userUuid;
     private String userName;
@@ -138,12 +140,12 @@ public class UserAll {
         this.departUuid = departUuid;
     }
 
-    public String getTeacheId() {
-        return teacheId;
+    public String getTeacherId() {
+        return teacherId;
     }
 
-    public void setTeacheId(String teacheId) {
-        this.teacheId = teacheId;
+    public void setTeacherId(String teacherId) {
+        this.teacherId = teacherId;
     }
 
     public String getTeacherIntro() {
@@ -186,20 +188,75 @@ public class UserAll {
         this.entryDate = entryDate;
     }
 
-    public String getGradutaionDate() {
-        return gradutaionDate;
+    public String getGraduationDate() {
+        return graduationDate;
     }
 
-    public void setGradutaionDate(String gradutaionDate) {
-        this.gradutaionDate = gradutaionDate;
+    public void setGradutaionDate(String graduationDate) {
+        this.graduationDate = graduationDate;
     }
 
     private String departUuid;
-    private String teacheId;
+    private String teacherId;
     private String teacherIntro;
     private String classUuid;
     private String studentUuid;
     private String studentId;
     private String entryDate;
-    private String gradutaionDate;
+    private String graduationDate;
+    private Timestamp createDate;
+    private Timestamp updateDate;
+    private Double firstScore;
+    private Double secondScore;
+    private Double thirdScore;
+
+    public Double getFirstScore() {
+        return firstScore;
+    }
+
+    public void setFirstScore(Double firstScore) {
+        this.firstScore = firstScore;
+    }
+
+    public Double getSecondScore() {
+        return secondScore;
+    }
+
+    public void setSecondScore(Double secondScore) {
+        this.secondScore = secondScore;
+    }
+
+    public Double getThirdScore() {
+        return thirdScore;
+    }
+
+    public void setThirdScore(Double thirdScore) {
+        this.thirdScore = thirdScore;
+    }
+
+    public double getExamScore() {
+        return examScore;
+    }
+
+    public void setExamScore(double examScore) {
+        this.examScore = examScore;
+    }
+
+    private double examScore;
+
+    public Timestamp getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Timestamp updateDate) {
+        this.updateDate = updateDate;
+    }
+
+    public Timestamp getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Timestamp createDate) {
+        this.createDate = createDate;
+    }
 }

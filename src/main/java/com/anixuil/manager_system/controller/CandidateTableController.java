@@ -3,10 +3,7 @@ package com.anixuil.manager_system.controller;
 import com.anixuil.manager_system.entity.CandidateTable;
 import com.anixuil.manager_system.entity.Rest;
 import com.anixuil.manager_system.service.CandidateTableService;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -22,4 +19,6 @@ public class CandidateTableController {
     public Rest updateCandidate(@RequestBody CandidateTable candidateTable){
         return candidateTableService.updateCandidate(candidateTable);
     }
+
+
 }

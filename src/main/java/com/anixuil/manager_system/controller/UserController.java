@@ -58,4 +58,70 @@ public class UserController {
     public Rest deleteUser(@RequestBody UserTable userTable){
         return userTableService.deleteUser(userTable);
     }
+
+    //获取考生列表
+    @GetMapping("getCandidateList")
+    public Rest getCandidateList(
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(defaultValue = "") String userUuid,
+            @RequestParam(defaultValue = "") String userName,
+            @RequestParam(defaultValue = "") String userPhone,
+            @RequestParam(defaultValue = "") String userEmail,
+            @RequestParam(defaultValue = "") String majorUuid,
+            @RequestParam(defaultValue = "") String candidateId,
+            @RequestParam(defaultValue = "") String candidateStatus,
+            @RequestParam(defaultValue = "") String examPlace
+    ){
+        return userTableService.getCandidateList(pageNum,pageSize,userUuid,userName,userPhone,userEmail,majorUuid,candidateId,candidateStatus,examPlace);
+    }
+
+    //修改考生信息
+    @PutMapping("updateCandidate")
+    public Rest updateCandidate(@RequestBody UserAll user){
+        return userTableService.updateCandidate(user);
+    }
+
+    //获取学生列表
+    @GetMapping("getStudentList")
+    public Rest getStudentList(
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(defaultValue = "") String userUuid,
+            @RequestParam(defaultValue = "") String userName,
+            @RequestParam(defaultValue = "") String userPhone,
+            @RequestParam(defaultValue = "") String userEmail,
+            @RequestParam(defaultValue = "") String majorUuid,
+            @RequestParam(defaultValue = "") String studentId
+    ){
+        return userTableService.getStudentList(pageNum,pageSize,userUuid,userName,userPhone,userEmail,majorUuid,studentId);
+    }
+
+    //修改学生信息
+    @PutMapping("updateStudent")
+    public Rest updateStudent(@RequestBody UserAll user){
+        return userTableService.updateStudent(user);
+    }
+
+    //获取教师列表
+    @GetMapping("getTeacherList")
+    public Rest getTeacherList(
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(defaultValue = "") String userUuid,
+            @RequestParam(defaultValue = "") String userName,
+            @RequestParam(defaultValue = "") String userPhone,
+            @RequestParam(defaultValue = "") String userEmail,
+            @RequestParam(defaultValue = "") String departUuid,
+            @RequestParam(defaultValue = "") String teacherId,
+            @RequestParam(defaultValue = "") String classUuid
+    ){
+        return userTableService.getTeacherList(pageNum,pageSize,userUuid,userName,userPhone,userEmail,teacherId,departUuid,classUuid);
+    }
+
+    //修改教师信息
+    @PutMapping("updateTeacher")
+    public Rest updateTeacher(@RequestBody UserAll user){
+        return userTableService.updateTeacher(user);
+    }
 }

@@ -27,7 +27,7 @@ public class StudentTableServiceImpl extends ServiceImpl<StudentTableMapper, Stu
     public Boolean addStudent(UserAll user) {
         try{
             StudentTable studentTable = new StudentTable();
-            if(user.getStudentId() == null) {
+            if(user.getStudentId().isEmpty()) {
                 studentTable.setStudentId(String.valueOf(new Date().getTime()));
             }else{
                 studentTable.setStudentId(user.getStudentId());
@@ -35,7 +35,7 @@ public class StudentTableServiceImpl extends ServiceImpl<StudentTableMapper, Stu
             studentTable.setUserUuid(user.getUserUuid());
             studentTable.setMajorUuid(user.getMajorUuid());
             studentTable.setEntryDate(user.getEntryDate());
-            studentTable.setGraduationDate(user.getGradutaionDate());
+            studentTable.setGraduationDate(user.getGraduationDate());
             return save(studentTable);
         }catch (Exception e) {
             return false;
