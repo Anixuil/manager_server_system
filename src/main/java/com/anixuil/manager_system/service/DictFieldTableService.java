@@ -25,4 +25,7 @@ public interface DictFieldTableService extends IService<DictFieldTable> {
 
     //删除字典字段
     Rest deleteDictField(DictFieldTable dictFieldTable);
+
+    //新增字典项
+    Rest addDictFieldItem(DictFieldTable dictFieldTable);
 }

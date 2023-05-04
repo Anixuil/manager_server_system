@@ -68,4 +68,21 @@ public class DictFieldTableServiceImpl extends ServiceImpl<DictFieldTableMapper,
     public Rest deleteDictField(DictFieldTable dictFieldTable) {
         return null;
     }
+
+    //新增字典项
+    @Override
+    public Rest addDictFieldItem(DictFieldTable dictFieldTable) {
+        String msg = "新增字典项";
+        try{
+            //新增字典项
+            System.out.println(dictFieldTable.getDictName());
+            boolean result = save(dictFieldTable);
+            if(result){
+                return Rest.success(msg,true);
+            }
+            return Rest.fail(msg,false);
+        }catch (Exception e){
+            return Rest.error(msg,e);
+        }
+    }
 }
