@@ -4,10 +4,7 @@ package com.anixuil.manager_system.controller;
 import com.anixuil.manager_system.entity.Rest;
 import com.anixuil.manager_system.entity.StudentTable;
 import com.anixuil.manager_system.service.StudentTableService;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -23,4 +20,5 @@ public class StudentController {
     public Rest updateStudent(@RequestBody StudentTable studentTable){
         return studentTableService.updateStudent(studentTable);
     }
+
 }

@@ -2,7 +2,7 @@
 
 #端口号
 server:
-  port: 8080
+  port: 2001
   servlet:
     context-path: /anixuil
   tomcat:

@@ -16,9 +16,8 @@ public class CandidateTableController {
 
     //修改考生信息
     @PutMapping("updateCandidate")
-    public Rest updateCandidate(@RequestBody CandidateTable candidateTable){
+    public Rest updateCandidate(@RequestBody CandidateTable candidateTable) {
         return candidateTableService.updateCandidate(candidateTable);
     }
-
 
 }

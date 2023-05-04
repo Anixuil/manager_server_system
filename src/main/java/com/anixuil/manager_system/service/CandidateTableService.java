@@ -24,5 +24,4 @@ public interface CandidateTableService extends IService<CandidateTable> {
 
     //修改考生信息
     Rest updateCandidate(CandidateTable candidateTable);
-
   }

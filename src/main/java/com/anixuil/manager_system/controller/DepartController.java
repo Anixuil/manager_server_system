@@ -36,7 +36,9 @@ public class DepartController {
 
     //获取所有院系
     @GetMapping("getAllDepart")
-    public Rest getAllDepart(Integer pageNum,Integer pageSize){
+    public Rest getAllDepart(
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize){
         return departTableService.getAllDepart(pageNum,pageSize);
     }
 

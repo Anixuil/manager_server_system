@@ -70,4 +70,6 @@ public class CandidateTableServiceImpl extends ServiceImpl<CandidateTableMapper,
             return Rest.error(msg,e);
         }
     }
+
+
 }

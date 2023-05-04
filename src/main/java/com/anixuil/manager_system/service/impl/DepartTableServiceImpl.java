@@ -20,6 +20,8 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 /**
@@ -59,6 +61,7 @@ public class DepartTableServiceImpl extends ServiceImpl<DepartTableMapper, Depar
                 map.put("updateDate",Datetime.format(departTable.getUpdateDate()));
                 map.put("isDelete",departTable.getIsDelete());
                 map.put("majorCount",majorTableService.count(new LambdaQueryWrapper<MajorTable>().eq(MajorTable::getDepartUuid,departTable.getDepartUuid())));
+                AtomicLong studentCount = new AtomicLong();
                 map.put("majorList",majorTableService.list(new LambdaQueryWrapper<MajorTable>().eq(MajorTable::getDepartUuid,departTable.getDepartUuid())).stream().map(majorTable -> {
                     Map<String,Object> majorMap = new HashMap<>();
                     majorMap.put("majorUuid",majorTable.getMajorUuid());
@@ -69,8 +72,10 @@ public class DepartTableServiceImpl extends ServiceImpl<DepartTableMapper, Depar
                     majorMap.put("updateDate",Datetime.format(majorTable.getUpdateDate()));
                     majorMap.put("isDelete",majorTable.getIsDelete());
                     majorMap.put("studentCount",studentTableService.count(new LambdaQueryWrapper<StudentTable>().eq(StudentTable::getMajorUuid,majorTable.getMajorUuid())));
+                    studentCount.addAndGet(studentTableService.count(new LambdaQueryWrapper<StudentTable>().eq(StudentTable::getMajorUuid, majorTable.getMajorUuid())));
                     return majorMap;
                 }).collect(Collectors.toList()));
+                map.put("studentCount",studentCount.get());
                 return map;
             }).collect(Collectors.toList());
             //返回的数据

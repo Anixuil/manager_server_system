@@ -22,4 +22,5 @@ public interface TeacherTableService extends IService<TeacherTable> {
 
     //修改教师信息
     Rest updateTeacher(TeacherTable teacherTable);
+
 }
