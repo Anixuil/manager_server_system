@@ -34,7 +34,9 @@ public class HweiYunOBSController {
         if(file.isEmpty()){
             return Rest.fail(msg,"文件为空");
         }
-        final String result = hweiYunOBSService.fileUpload(file,file.getOriginalFilename()) + "?x-image-process=style/image-style";
+        final Map<String,Object> result = new HashMap<>();
+        result.put("url",hweiYunOBSService.fileUpload(file,file.getOriginalFilename()) + "?x-image-process=style/image-style");
+        result.put("name",file.getOriginalFilename());
         return Rest.success(msg,result);
     }
 

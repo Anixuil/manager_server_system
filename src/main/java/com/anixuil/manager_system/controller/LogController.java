@@ -22,12 +22,13 @@ public class LogController {
     public Rest getLogList(
             @RequestParam(defaultValue = "1") Integer pageNum,
             @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(defaultValue = "") String logUuid,
             @RequestParam(defaultValue = "") String userUuid,
             @RequestParam(defaultValue = "") String logTitle,
             @RequestParam(defaultValue = "") String logContent,
             @RequestParam(defaultValue = "") String logStatus
     ){
-        return logTableService.getLogList(pageNum,pageSize,userUuid,logTitle,logContent,logStatus);
+        return logTableService.getLogList(pageNum,pageSize,logUuid,userUuid,logTitle,logContent,logStatus);
     }
 
 }

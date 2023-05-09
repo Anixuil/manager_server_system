@@ -43,7 +43,7 @@ public class WorkFlowTable implements Serializable {
     private Integer workFlowIndex;
 
     @TableField("work_flow_status")
-    private String workFlowStatus;
+    private Boolean workFlowStatus;
 
     @TableField(value = "create_date", fill = FieldFill.INSERT)
     @ExcelProperty("创建时间")

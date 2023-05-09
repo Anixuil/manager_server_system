@@ -253,8 +253,6 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
         try{
              //判断当前用户的角色是否有相关的身份
                 String newRole = userTable.getUserRole();
-                System.out.println("oldRole:"+oldRole);
-                System.out.println("newRole:"+newRole);
                 //如果角色没有改变，就不做处理
                 if(!oldRole.equals(newRole)){
                     boolean delFlag = false;
@@ -296,8 +294,6 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                             addFlag = teacherTableService.addTeacher(user);
                             break;
                     }
-                    System.out.println(delFlag);
-                    System.out.println(addFlag);
                     if(addFlag || delFlag){
                         update(userTable,new LambdaQueryWrapper<UserTable>().eq(UserTable::getUserUuid,userTable.getUserUuid()));
                         return Rest.success(msg,true);

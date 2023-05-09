@@ -41,7 +41,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(
                         "/user/login",
                         "/user/register",
-                        "/indexWheel/indexWheelList"
+                        "/indexWheel/indexWheelList",
+                        "/noticeInfo/getNoticeList",
+                        "/noticeInfo/getOne",
+                        "/public/**",
+                        "/file/download/**"
                 ).anonymous()
                 //其他接口需要认证
                 .anyRequest().authenticated();

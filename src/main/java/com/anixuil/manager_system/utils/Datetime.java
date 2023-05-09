@@ -12,4 +12,8 @@ public class Datetime {
     public static String format(Timestamp timestamp){
         return DateTime.of(timestamp).toString("yyyy-MM-dd HH:mm:ss");
     }
+
+    public static String format(Timestamp timestamp,String pattern){
+        return DateTime.of(timestamp).toString(pattern);
+    }
 }

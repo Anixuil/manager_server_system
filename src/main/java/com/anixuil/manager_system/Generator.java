@@ -17,9 +17,12 @@ public class Generator {
         */
 
         //数据库连接
-        String url = "jdbc:mysql://localhost:3306/manager_database?useSSL=false&serverTimezone=Asia/Shanghai";//数据库url
-        String username = "root";//账号
-        String password = "123456";//密码
+//        String url = "jdbc:mysql://localhost:3306/manager_database?useSSL=false&serverTimezone=Asia/Shanghai";//数据库url
+        String url = "jdbc:mysql://110.41.145.35:3306/anixuildatabase?useSSL=false&serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8";//服务器数据库url
+        String username = "anixuilDatabase";
+        String password = "200131";
+//        String username = "root";//账号
+//        String password = "123456";//密码
 //        String module = "manager_system";//模块名
         //全局配置参数
         String author = "Anixuil";//作者
@@ -52,6 +55,7 @@ public class Generator {
         tables.add("log_table");
         tables.add("dict_table");
         tables.add("dict_field_table");
+        tables.add("attachment_table");
         //开始生成
         FastAutoGenerator.create(url,username,password)
                 //全局配置

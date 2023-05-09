@@ -4,6 +4,7 @@ import com.anixuil.manager_system.entity.LogTable;
 import com.anixuil.manager_system.entity.Rest;
 import com.anixuil.manager_system.mapper.LogTableMapper;
 import com.anixuil.manager_system.service.LogTableService;
+import com.anixuil.manager_system.service.UserTableService;
 import com.anixuil.manager_system.utils.Datetime;
 import com.anixuil.manager_system.utils.JwtUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -12,6 +13,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +29,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class LogTableServiceImpl extends ServiceImpl<LogTableMapper, LogTable> implements LogTableService {
-
+    @Resource
+    UserTableService userTableService;
     @Override
     public Rest addLog(LogTable logTable,String token) {
         String msg = "新增日志";
@@ -48,7 +51,7 @@ public class LogTableServiceImpl extends ServiceImpl<LogTableMapper, LogTable> i
     }
 
     @Override
-    public Rest getLogList(Integer pageNum, Integer pageSize,String userUuid, String logTitle, String logContent, String logStatus) {
+    public Rest getLogList(Integer pageNum, Integer pageSize,String logUuid,String userUuid, String logTitle, String logContent, String logStatus) {
         String msg = "获取日志列表";
         try{
 
@@ -65,6 +68,7 @@ public class LogTableServiceImpl extends ServiceImpl<LogTableMapper, LogTable> i
                     .like(LogTable::getLogContent,logContent)
                     .like(LogTable::getUserUuid,userUuid)
                     .like(LogTable::getLogStatus,logStatus)
+                    .like(LogTable::getLogUuid,logUuid)
                     .orderByDesc(LogTable::getCreateDate);
             IPage<LogTable> logTableIPage = page(page, wrapper);
             List<LogTable>  logTableList = logTableIPage.getRecords();
@@ -76,6 +80,7 @@ public class LogTableServiceImpl extends ServiceImpl<LogTableMapper, LogTable> i
                 map.put("logStatus",logTable.getLogStatus());
                 map.put("createDate", Datetime.format(logTable.getCreateDate()));
                 map.put("userUuid",logTable.getUserUuid());
+                map.put("userName",userTableService.getById(logTable.getUserUuid()).getUserName());
                 return map;
             }).collect(Collectors.toList());
             Map<String,Object> map = new HashMap<>();

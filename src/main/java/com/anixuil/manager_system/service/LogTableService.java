@@ -17,5 +17,5 @@ public interface LogTableService extends IService<LogTable> {
     Rest addLog(LogTable logTable,String token);
 
     //获取日志列表
-    Rest getLogList(Integer pageNum,Integer pageSize,String userUuid,String logTitle,String logContent,String logStatus);
+    Rest getLogList(Integer pageNum,Integer pageSize,String logUuid,String userUuid,String logTitle,String logContent,String logStatus);
 }

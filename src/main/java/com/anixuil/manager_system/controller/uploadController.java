@@ -115,9 +115,21 @@ public class uploadController {
     //富文本上传
     @PostMapping("editorUpload")
     public Map<String,Object> editorUpload(@RequestBody MultipartFile file){
-        String msg = "上传文件";
         try{
-            return saveTextFile(file,msg);
+            return saveTextFile(file);
+        }catch (Exception e){
+            Map<String,Object> result = new HashMap<String,Object>();
+            result.put("errno",1);
+            result.put("message","上传失败");
+            return result;
+        }
+    }
+
+    //富文本视频上传
+    @PostMapping("editorVideoUpload")
+    public Map<String,Object> editorVideoUpload(@RequestBody MultipartFile file){
+        try{
+            return saveVideoFile(file);
         }catch (Exception e){
             Map<String,Object> result = new HashMap<String,Object>();
             result.put("errno",1);
@@ -151,7 +163,7 @@ public class uploadController {
     }
 
     //富文本上传
-    private Map<String,Object> saveTextFile(MultipartFile file,String msg) {
+    private Map<String,Object> saveTextFile(MultipartFile file) {
         Map<String, Object> result = new HashMap<String, Object>();
         if (file.isEmpty()) {
             result.put("errno", 1);
@@ -182,4 +194,37 @@ public class uploadController {
             return result;
         }
     }
+
+    //富文本视频上传
+    private Map<String,Object> saveVideoFile(MultipartFile file){
+        Map<String, Object> result = new HashMap<String, Object>();
+        if (file.isEmpty()) {
+            result.put("errno", 1);
+            result.put("message", "未检测到文件");
+            return result;
+        }
+        String filePath = "D:/code/java/public/";
+        String fileName = file.getOriginalFilename();   //获取上传文件原名称
+        File temp = new File(filePath);
+        if (!temp.exists()) {
+            temp.mkdirs();
+        }
+
+        File localFile = new File(filePath + fileName);
+        try {
+            file.transferTo(localFile); //把上传的文件保存到本地
+            result.put("errno", 0);
+            Map<String, Object> data = new HashMap<String, Object>();
+            data.put("url", "http://localhost:8080/anixuil/public/" + fileName);
+            data.put("poster", "http://localhost:8080/anixuil/public/" + fileName);
+            result.put("data", data);
+            return result;
+        } catch (IOException e) {
+            e.printStackTrace();
+            result.put("errno", 1);
+            result.put("message", e);
+            return result;
+        }
+    }
+
 }

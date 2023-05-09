@@ -1,5 +1,6 @@
 package com.anixuil.manager_system.entity;
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
@@ -16,35 +17,34 @@ import lombok.Setter;
  * </p>
  *
  * @author Anixuil
- * @since 2023-03-09
+ * @since 2023-05-07
  */
 @Getter
 @Setter
-@TableName("notice_info_table")
-@ApiModel(value = "NoticeInfoTable对象", description = "")
-public class NoticeInfoTable implements Serializable {
+@TableName("attachment_table")
+@ApiModel(value = "AttachmentTable对象", description = "")
+public class AttachmentTable implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "notice_info_uuid", type = IdType.ASSIGN_UUID)
+    @TableField("notice_info_uuid")
     private String noticeInfoUuid;
 
-    @TableField("notice_info_title")
-    private String noticeInfoTitle;
+    @TableId(value="attachment_uuid",type = IdType.ASSIGN_UUID)
+    private String attachmentUuid;
 
-    @TableField("notice_info_intro")
-    private String noticeInfoIntro;
+    @TableField("attachment_name")
+    private String attachmentName;
 
-    @TableField("notice_info_content")
-    private String noticeInfoContent;
-
-    @TableField("notice_info_type")
-    private String noticeInfoType;
+    @TableField("attachment_href")
+    private String attachmentHref;
 
     @TableField(value = "create_date", fill = FieldFill.INSERT)
+    @ExcelProperty("创建时间")
     private Timestamp createDate;
 
     @TableField(value = "update_date", fill = FieldFill.INSERT_UPDATE)
+    @ExcelProperty("更新时间")
     private Timestamp updateDate;
 
     @TableField("is_delete")

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.anixuil.manager_system.mapper.AttachmentTableMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.anixuil.manager_system.entity.AttachmentTable">
+        <id column="attachement_uuid" property="attachementUuid" />
+        <result column="notice_info_uuid" property="noticeInfoUuid" />
+        <result column="attachement_name" property="attachementName" />
+        <result column="attachement_href" property="attachementHref" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+        <result column="is_delete" property="isDelete" />
+    </resultMap>
+
+</mapper>
