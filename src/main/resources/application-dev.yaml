@@ -30,6 +30,9 @@ spring:
     url: jdbc:mysql://110.41.145.35:3306/anixuilDatabase?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: anixuilDatabase
     password: 200131
+    druid:
+      time-between-eviction-runs-millis: 30000
+      min-evictable-idle-time-millis: 60000
   servlet:
     multipart:
       max-request-size: 1024MB # 上传文件总的最大值 默认10mb

@@ -5,6 +5,7 @@ import com.anixuil.manager_system.entity.*;
 import com.anixuil.manager_system.mapper.*;
 import com.anixuil.manager_system.pojo.DepartAll;
 import com.anixuil.manager_system.pojo.UserAll;
+import com.anixuil.manager_system.pojo.UserScoreAll;
 import com.anixuil.manager_system.service.*;
 import com.anixuil.manager_system.service.impl.UserTableServiceImpl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @RestController
 @RequestMapping("publicfile")
@@ -45,6 +47,10 @@ public class uploadController {
     StudentTableMapper studentTableMapper;
     @Resource
     TeacherTableMapper teacherTableMapper;
+    @Resource
+    ExamScoreTableMapper examScoreTableMapper;
+    @Resource
+    ExamClassTableMapper examClassTableMapper;
 
     //excel表格导入
     @PostMapping("importExcel")
@@ -271,9 +277,6 @@ public class uploadController {
                                             candidateTable.setMajorUuid(item.getMajorUuid());
                                             candidateTable.setCandidateId(item.getCandidateId());
                                             candidateTable.setExamPlace(item.getExamPlace());
-                                            candidateTable.setFirstScore(item.getFirstScore());
-                                            candidateTable.setSecondScore(item.getSecondScore());
-                                            candidateTable.setThirdScore(item.getThirdScore());
                                             candidateTableMapper.insert(candidateTable);
                                             break;
                                         case "student":
@@ -298,6 +301,97 @@ public class uploadController {
                                 }
                             }
                         break;
+                    case "ExamScoreTable":
+                        List<UserScoreAll> userScoreData = EasyExcel.read(file.getInputStream()).head(UserScoreAll.class).sheet().doReadSync();
+                        for(UserScoreAll item : userScoreData){
+                            //判断当前信息是否必填
+                            if(item.getUserName() == null || item.getExamType() == null || item.getExamScore() == null || item.getExamClassName() == null || item.getCandidateId() == null){
+                                failList.add(item.getUserName());
+                                System.out.println("考生信息不完整");
+                                continue;
+                            }
+                            //判断当前考生是否存在
+                            LambdaQueryWrapper<UserTable> userWrapper = new LambdaQueryWrapper<>();
+                            userWrapper.eq(UserTable::getUserName,item.getUserName());
+                            List<UserTable> userTableList = userTableMapper.selectList(userWrapper);
+                            //通过用户姓名和考生id确认到唯一考生是否存在
+                            LambdaQueryWrapper<CandidateTable> candidateWrapper = new LambdaQueryWrapper<>();
+                            AtomicInteger uniqueCount = new AtomicInteger();
+                            userTableList.stream().forEach(userTable -> {
+                                candidateWrapper
+                                        .eq(CandidateTable::getCandidateId,item.getCandidateId())
+                                        .eq(CandidateTable::getUserUuid,userTable.getUserUuid());
+                                if(candidateTableMapper.exists(candidateWrapper)){
+                                    uniqueCount.getAndAdd(1);
+                                    //如果唯一考生存在则更新考生信息
+                                    if(uniqueCount.get() == 1){
+                                        item.setUserUuid(userTable.getUserUuid());
+                                    }
+                                }else{
+                                    failList.add(item.getUserName());
+                                    System.out.println("考生不存在");
+                                }
+                            });
+                            //如果唯一考生不存在则跳过
+                            if(uniqueCount.get() != 1){
+                                continue;
+                            }
+                            ExamScoreTable examScoreTable = new ExamScoreTable();
+                            //转换考试类型
+                            boolean examTypeFlag = true;
+                            switch (item.getExamType()){
+                                case "初试":
+                                    examScoreTable.setExamType("0");
+                                    break;
+                                case "复试":
+                                    examScoreTable.setExamType("1");
+                                    break;
+                                case "调剂":
+                                    examScoreTable.setExamType("2");
+                                    break;
+                                default:
+                                    failList.add(item.getUserName());
+                                    System.out.println("考试类型错误");
+                                    examTypeFlag = false;
+                            }
+                            if(!examTypeFlag){
+                                continue;
+                            }
+                            //转换考试科目
+                            boolean examSubjectFlag = true;
+                            //先获取到所属专业的uuid
+                            LambdaQueryWrapper<MajorTable> majorWrapper = new LambdaQueryWrapper<>();
+                            majorWrapper.eq(MajorTable::getMajorName,item.getMajorName());
+                            List<MajorTable> majorTableList = majorTableMapper.selectList(majorWrapper);
+                            //如果重复的专业里有这个科目则获取科目uuid
+                            majorTableList.stream().forEach(majorTable -> {
+                                //获取科目uuid
+                                LambdaQueryWrapper<ExamClassTable> examClassTableLambdaQueryWrapper = new LambdaQueryWrapper<>();
+                                examClassTableLambdaQueryWrapper
+                                        .eq(ExamClassTable::getExamClassName,item.getExamClassName())
+                                        .eq(ExamClassTable::getMajorUuid, majorTable.getMajorUuid());
+                                if(examClassTableMapper.exists(examClassTableLambdaQueryWrapper)){
+                                    ExamClassTable examClassTable = examClassTableMapper.selectOne(examClassTableLambdaQueryWrapper);
+                                    item.setExamClassUuid(examClassTable.getExamClassUuid());
+                                }
+
+                            });
+                            //检查该类型、科目考试是否已存在
+                            LambdaQueryWrapper<ExamScoreTable> examScoreWrapper = new LambdaQueryWrapper<>();
+                            examScoreWrapper
+                                    .eq(ExamScoreTable::getUserUuid,item.getUserUuid())
+                                    .eq(ExamScoreTable::getExamType,examScoreTable.getExamType())
+                                    .eq(ExamScoreTable::getExamClassUuid,item.getExamClassUuid());
+                            if(examScoreTableMapper.exists(examScoreWrapper)){
+                                failList.add(item.getUserName());
+                                System.out.println("该考试成绩已存在");
+                                continue;
+                            }
+                            examScoreTable.setUserUuid(item.getUserUuid());
+                            examScoreTable.setExamClassUuid(item.getExamClassUuid());
+                            examScoreTable.setExamScore(item.getExamScore());
+                            examScoreTableMapper.insert(examScoreTable);
+                        }
                 }
                 result.put("successList",successList);
                 result.put("successCount",successList.size());

@@ -1,6 +1,7 @@
 package com.anixuil.manager_system.service.impl;
 
 import com.anixuil.manager_system.entity.*;
+import com.anixuil.manager_system.mapper.ExamClassTableMapper;
 import com.anixuil.manager_system.mapper.UserTableMapper;
 import com.anixuil.manager_system.pojo.UserAll;
 import com.anixuil.manager_system.service.*;
@@ -59,6 +60,8 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
 
         @Resource
         ExamScoreTableService examScoreTableService;
+        @Resource
+        ExamClassTableMapper examClassTableMapper;
 
         @Resource
         DepartTableService departTableService;
@@ -158,9 +161,6 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                 info.put("candidateId",candidateTable.getCandidateId());
                 info.put("candidateStatus",candidateTable.getCandidateStatus());
                 info.put("examPlace",candidateTable.getExamPlace());
-                info.put("firstScore",candidateTable.getFirstScore());
-                info.put("secondScore",candidateTable.getSecondScore());
-                info.put("thirdScore",candidateTable.getThirdScore());
                 info.put("confirmStatus",candidateTable.getConfirmStatus());
             }
             if(role.equals("teacher")){
@@ -359,7 +359,7 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                     .like(UserTable::getUserPhone,userPhone)
                     .like(UserTable::getUserEmail,userEmail)
                     .leftJoin(CandidateTable.class,CandidateTable::getUserUuid,UserTable::getUserUuid)
-                    .select(CandidateTable::getCandidateUuid,CandidateTable::getCandidateId,CandidateTable::getCandidateStatus,CandidateTable::getExamPlace,CandidateTable::getMajorUuid,CandidateTable::getFirstScore,CandidateTable::getSecondScore,CandidateTable::getThirdScore)
+                    .select(CandidateTable::getCandidateUuid,CandidateTable::getCandidateId,CandidateTable::getCandidateStatus,CandidateTable::getExamPlace,CandidateTable::getMajorUuid)
                     .like(CandidateTable::getMajorUuid,majorUuid)
                     .like(CandidateTable::getCandidateId,candidateId)
                     .like(CandidateTable::getCandidateStatus,candidateStatus)
@@ -383,9 +383,21 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                 map.put("examPlace",userAll.getExamPlace());
                 map.put("createDate", Datetime.format(userAll.getCreateDate()));
                 map.put("updateDate",Datetime.format(userAll.getUpdateDate()));
-                map.put("firstScore",userAll.getFirstScore());
-                map.put("secondScore",userAll.getSecondScore());
-                map.put("thirdScore",userAll.getThirdScore());
+                //查询考生初试成绩各科总成绩
+                QueryWrapper<ExamScoreTable> examScoreTableQueryWrapper = new QueryWrapper<>();
+                examScoreTableQueryWrapper.select("IFNULL(sum(exam_score),0) as firstScore").eq("user_uuid",userAll.getUserUuid()).eq("exam_type","0");
+                Map<String,Object> examScoreMap = examScoreTableService.getMap(examScoreTableQueryWrapper);
+                map.put("firstScore",examScoreMap.get("firstScore"));
+                //查询考生复试成绩各科总成绩
+                examScoreTableQueryWrapper = new QueryWrapper<>();
+                examScoreTableQueryWrapper.select("IFNULL(sum(exam_score),0) as secondScore").eq("user_uuid",userAll.getUserUuid()).eq("exam_type","1");
+                examScoreMap = examScoreTableService.getMap(examScoreTableQueryWrapper);
+                map.put("secondScore",examScoreMap.get("secondScore"));
+                //查询考生调剂成绩各科总成绩
+                examScoreTableQueryWrapper = new QueryWrapper<>();
+                examScoreTableQueryWrapper.select("IFNULL(sum(exam_score),0) as thirdScore").eq("user_uuid",userAll.getUserUuid()).eq("exam_type","2");
+                examScoreMap = examScoreTableService.getMap(examScoreTableQueryWrapper);
+                map.put("thirdScore",examScoreMap.get("thirdScore"));
                 map.put("confirmStatus",userAll.getConfirmStatus());
                 return map;
             }).collect(Collectors.toList());
@@ -422,9 +434,6 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                 candidateTable.setCandidateId(userAll.getCandidateId());
                 candidateTable.setCandidateStatus(userAll.getCandidateStatus());
                 candidateTable.setExamPlace(userAll.getExamPlace());
-                candidateTable.setFirstScore(userAll.getFirstScore());
-                candidateTable.setSecondScore(userAll.getSecondScore());
-                candidateTable.setThirdScore(userAll.getThirdScore());
                 candidateTable.setConfirmStatus(userAll.getConfirmStatus());
                 result = candidateTableService.updateById(candidateTable);
                 if(result){

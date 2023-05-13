@@ -57,11 +57,5 @@ public class UserAll {
     private String graduationDate;
     private Timestamp createDate;
     private Timestamp updateDate;
-    @ExcelProperty("初试成绩")
-    private Double firstScore;
-    @ExcelProperty("复试成绩")
-    private Double secondScore;
-    @ExcelProperty("调剂成绩")
-    private Double thirdScore;
 
 }
