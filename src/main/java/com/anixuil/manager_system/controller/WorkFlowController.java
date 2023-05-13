@@ -38,8 +38,9 @@ public class WorkFlowController {
             @RequestParam(defaultValue = "10") Integer pageSize,
             @RequestParam(defaultValue = "") String workFlowUuid,
             @RequestParam(defaultValue = "") String workFlowTitle,
-            @RequestParam(defaultValue = "") String workFlowDesc) {
-        return workFlowTableService.getWorkFlowList(pageNum, pageSize,workFlowUuid, workFlowTitle, workFlowDesc);
+            @RequestParam(defaultValue = "") String workFlowDesc,
+            @RequestParam(defaultValue = "") String workFlowType) {
+        return workFlowTableService.getWorkFlowList(pageNum, pageSize,workFlowUuid, workFlowTitle, workFlowDesc, workFlowType);
     }
 
 }

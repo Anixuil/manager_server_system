@@ -1,8 +1,10 @@
 package com.anixuil.manager_system.service.impl;
 
+import com.anixuil.manager_system.entity.CandidateTable;
 import com.anixuil.manager_system.entity.EnroPlanTable;
 import com.anixuil.manager_system.entity.Rest;
 import com.anixuil.manager_system.mapper.EnroPlanTableMapper;
+import com.anixuil.manager_system.service.CandidateTableService;
 import com.anixuil.manager_system.service.EnroPlanTableService;
 import com.anixuil.manager_system.service.MajorTableService;
 import com.anixuil.manager_system.utils.Datetime;
@@ -30,6 +32,8 @@ import java.util.stream.Collectors;
 public class EnroPlanTableServiceImpl extends ServiceImpl<EnroPlanTableMapper, EnroPlanTable> implements EnroPlanTableService {
     @Resource
     MajorTableService majorTableService;
+    @Resource
+    CandidateTableService candidateTableService;
 
     @Override
     public Rest addEnroPlan(EnroPlanTable enroPlanTable) {
@@ -93,7 +97,7 @@ public class EnroPlanTableServiceImpl extends ServiceImpl<EnroPlanTableMapper, E
                 map.put("majorUuid",enroPlanTable.getMajorUuid());
                 map.put("majorName",majorTableService.getById(enroPlanTable.getMajorUuid()).getMajorName());
                 map.put("enroPlanNumber",enroPlanTable.getEnroPlanNumber());
-                map.put("enroRealNumber",enroPlanTable.getEnroRealNumber());
+                map.put("enroRealNumber",candidateTableService.count(new LambdaQueryWrapper<CandidateTable>().eq(CandidateTable::getMajorUuid,enroPlanTable.getMajorUuid())));
                 map.put("createDate", Datetime.format(enroPlanTable.getCreateDate()));
                 map.put("updateDate",Datetime.format(enroPlanTable.getUpdateDate()));
                 map.put("isDelete",enroPlanTable.getIsDelete());

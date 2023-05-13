@@ -77,18 +77,15 @@ public class ExamClassTableServiceImpl extends ServiceImpl<ExamClassTableMapper,
     }
 
     @Override
-    public Rest getExamClassList(Map<String, Object> params) {
+    public Rest getExamClassList(Integer pageNum, Integer pageSize, String majorUuid, String examClassName,String examType) {
         String msg = "查询考试科目";
         try{
-            int pageNum = Integer.parseInt(params.get("pageNum").toString());
-            int pageSize = Integer.parseInt(params.get("pageSize").toString());
-            String majorUuid = params.get("majorUuid") == null ? "" : params.get("majorUuid").toString();
-            String examClassName = params.get("examClassName") == null ? "" : params.get("examClassName").toString();
             IPage<ExamClassTable> page = new Page<>(pageNum,pageSize);
             LambdaQueryWrapper<ExamClassTable> wrapper = new LambdaQueryWrapper<>();
             wrapper.select(ExamClassTable::getExamClassUuid,ExamClassTable::getExamClassName,ExamClassTable::getMajorUuid,ExamClassTable::getExamClassDesc,ExamClassTable::getExamType,ExamClassTable::getCreateDate,ExamClassTable::getUpdateDate,ExamClassTable::getIsDelete)
                     .like(ExamClassTable::getMajorUuid,majorUuid)
-                    .like(ExamClassTable::getExamClassName,examClassName);
+                    .like(ExamClassTable::getExamClassName,examClassName)
+                    .like(ExamClassTable::getExamType,examType);
             IPage<ExamClassTable> examClassTableIPage = page(page,wrapper);
             List<ExamClassTable> examClassTableList = examClassTableIPage.getRecords();
             List<Map<String,Object>> mapList = examClassTableList.stream().map(examClassTable -> {

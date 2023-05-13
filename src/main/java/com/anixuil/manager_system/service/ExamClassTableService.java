@@ -25,5 +25,5 @@ public interface ExamClassTableService extends IService<ExamClassTable> {
     Rest deleteExamClass(ExamClassTable examClassTable);
 
     //查询考试科目
-    Rest getExamClassList(Map<String,Object> params);
+    Rest getExamClassList(Integer pageNum, Integer pageSize, String majorUuid, String examClassName, String examType);
 }

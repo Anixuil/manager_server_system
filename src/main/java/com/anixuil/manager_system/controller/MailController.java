@@ -43,6 +43,7 @@ public class MailController {
     public Rest sendEmail(@RequestBody Map<String,Object> emailOption){
         String msg = "邮件通知发送";
         String candidateStatus = emailOption.get("emailType").toString(); //获取发送对象类型
+        try{
         LambdaQueryWrapper<CandidateTable> wrapper = new LambdaQueryWrapper<>();
         //获取发送对象考生的userUuid，用于获取考生的邮箱
         wrapper.eq(CandidateTable::getCandidateStatus,candidateStatus)
@@ -60,7 +61,6 @@ public class MailController {
         AtomicInteger resultError = new AtomicInteger();
         List<String> emailErrorList = new ArrayList<>();
         Map<String,Object> res = new HashMap<>();
-        try{
             emailList.forEach(email -> {
                 boolean result = mailService.sendAttachmentsMail(email,emailTitle,emailContent,null);
                 if(result){

@@ -74,14 +74,15 @@ public class WorkFlowTableServiceImpl extends ServiceImpl<WorkFlowTableMapper, W
     }
 
     @Override
-    public Rest getWorkFlowList(Integer pageNum, Integer pageSize,String workFlowUuid, String workFlowTitle, String workFlowDesc) {
+    public Rest getWorkFlowList(Integer pageNum, Integer pageSize,String workFlowUuid, String workFlowTitle, String workFlowDesc, String workFlowType) {
         String msg = "获取工作流列表";
         try {
             IPage<WorkFlowTable> page = new Page<>(pageNum,pageSize);
             LambdaQueryWrapper<WorkFlowTable> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.like(WorkFlowTable::getWorkFlowTitle,workFlowTitle)
                     .like(WorkFlowTable::getWorkFlowDesc,workFlowDesc)
-                    .like(WorkFlowTable::getWorkFlowUuid,workFlowUuid);
+                    .like(WorkFlowTable::getWorkFlowUuid,workFlowUuid)
+                    .like(WorkFlowTable::getWorkFlowType,workFlowType);
             IPage<WorkFlowTable> workFlowTableIPage = page(page,queryWrapper);
             List<WorkFlowTable> workFlowTableList = workFlowTableIPage.getRecords();
             List<Map<String,Object>> mapList = workFlowTableList.stream().map(workFlowTable -> {
@@ -91,6 +92,7 @@ public class WorkFlowTableServiceImpl extends ServiceImpl<WorkFlowTableMapper, W
                 map.put("workFlowDesc",workFlowTable.getWorkFlowDesc());
                 map.put("workFlowStatus",workFlowTable.getWorkFlowStatus());
                 map.put("workFlowIndex",workFlowTable.getWorkFlowIndex());
+                map.put("workFlowType",workFlowTable.getWorkFlowType());
                 map.put("createDate", Datetime.format(workFlowTable.getCreateDate()));
                 map.put("updateDate",Datetime.format(workFlowTable.getUpdateDate()));
                 map.put("isDelete",workFlowTable.getIsDelete());

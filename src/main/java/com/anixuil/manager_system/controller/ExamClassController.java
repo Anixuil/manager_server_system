@@ -34,8 +34,14 @@ public class ExamClassController {
     }
 
     //查询考试科目
-    @PostMapping("/getExamClassList")
-    public Rest getExamClassList(@RequestBody Map<String,Object> params){
-        return examClassTableService.getExamClassList(params);
+    @GetMapping("/getExamClassList")
+    public Rest getExamClassList(
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(defaultValue = "") String majorUuid,
+            @RequestParam(defaultValue = "") String examClassName,
+            @RequestParam(defaultValue = "") String examType
+    ){
+        return examClassTableService.getExamClassList(pageNum,pageSize,majorUuid,examClassName,examType);
     }
 }
