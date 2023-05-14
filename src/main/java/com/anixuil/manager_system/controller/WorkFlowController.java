@@ -39,8 +39,9 @@ public class WorkFlowController {
             @RequestParam(defaultValue = "") String workFlowUuid,
             @RequestParam(defaultValue = "") String workFlowTitle,
             @RequestParam(defaultValue = "") String workFlowDesc,
-            @RequestParam(defaultValue = "") String workFlowType) {
-        return workFlowTableService.getWorkFlowList(pageNum, pageSize,workFlowUuid, workFlowTitle, workFlowDesc, workFlowType);
+            @RequestParam(defaultValue = "") String workFlowType,
+            @RequestParam(defaultValue = "") Boolean workFlowStatus) {
+        return workFlowTableService.getWorkFlowList(pageNum, pageSize,workFlowUuid, workFlowTitle, workFlowDesc, workFlowType, workFlowStatus);
     }
 
 }

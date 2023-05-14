@@ -30,6 +30,13 @@ public class UserTable implements Serializable {
     @ExcelProperty("用户UUID")
     private String userUuid;
 
+    @TableField("user_headimg")
+    private String userHeadimg;
+
+    @TableField("user_address")
+    @ExcelProperty("地址")
+    private String userAddress;
+
     @TableField("user_name")
     @ExcelProperty("用户名")
     private String userName;
@@ -57,6 +64,10 @@ public class UserTable implements Serializable {
     @TableField("user_age")
     @ExcelProperty("用户年龄")
     private Integer userAge;
+
+    @TableField("undergraduate_school")
+    @ExcelProperty("本科院校")
+    private String undergraduateSchool;
 
     @TableField(value = "create_date", fill = FieldFill.INSERT)
     @ExcelProperty("创建时间")

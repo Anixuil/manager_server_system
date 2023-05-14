@@ -104,6 +104,8 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
             userTable.setUserEmail(user.getUserEmail());
             userTable.setUserAge(user.getUserAge());
             userTable.setUserGender(user.getUserGender());
+            userTable.setUserHeadimg(user.getUserHeadimg());
+            userTable.setUserAddress(user.getUserAddress());
             if(user.getUserRole() == null) {
                 userTable.setUserRole("candidate");
                 user.setUserRole("candidate");
@@ -158,10 +160,28 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                 CandidateTable candidateTable = candidateTableService.getOne(wrapper);
                 info.put("candidateUuid",candidateTable.getCandidateUuid());
                 info.put("majorUuid",candidateTable.getMajorUuid());
+                info.put("majorName",majorTableService.getById(candidateTable.getMajorUuid()).getMajorName());
                 info.put("candidateId",candidateTable.getCandidateId());
                 info.put("candidateStatus",candidateTable.getCandidateStatus());
                 info.put("examPlace",candidateTable.getExamPlace());
-                info.put("confirmStatus",candidateTable.getConfirmStatus());
+                //查询考生初试成绩各科总成绩
+                QueryWrapper<ExamScoreTable> examScoreTableQueryWrapper = new QueryWrapper<>();
+                examScoreTableQueryWrapper.select("IFNULL(sum(exam_score),0) as firstScore").eq("user_uuid",userTable.getUserUuid()).eq("exam_type","0");
+                Map<String,Object> examScoreMap = examScoreTableService.getMap(examScoreTableQueryWrapper);
+                info.put("firstScore",examScoreMap.get("firstScore"));
+                //查询考生复试成绩各科总成绩
+                examScoreTableQueryWrapper = new QueryWrapper<>();
+                examScoreTableQueryWrapper.select("IFNULL(sum(exam_score),0) as secondScore").eq("user_uuid",userTable.getUserUuid()).eq("exam_type","1");
+                examScoreMap = examScoreTableService.getMap(examScoreTableQueryWrapper);
+                info.put("secondScore",examScoreMap.get("secondScore"));
+                //查询考生调剂成绩各科总成绩
+                examScoreTableQueryWrapper = new QueryWrapper<>();
+                examScoreTableQueryWrapper.select("IFNULL(sum(exam_score),0) as thirdScore").eq("user_uuid",userTable.getUserUuid()).eq("exam_type","2");
+                examScoreMap = examScoreTableService.getMap(examScoreTableQueryWrapper);
+                info.put("thirdScore",examScoreMap.get("thirdScore"));
+                info.put("informationStatus",candidateTable.getInformationStatus());
+                info.put("examDate",candidateTable.getExamDate());
+                System.out.println(candidateTable.getInformationStatus());
             }
             if(role.equals("teacher")){
                 LambdaQueryWrapper<TeacherTable> wrapper = new LambdaQueryWrapper<>();
@@ -192,6 +212,9 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
             info.put("userGender",userTable.getUserGender());
             info.put("createDate",userTable.getCreateDate());
             info.put("updateDate",userTable.getUpdateDate());
+            info.put("undergraduateSchool",userTable.getUndergraduateSchool());
+            info.put("userHeadimg",userTable.getUserHeadimg());
+            info.put("userAddress",userTable.getUserAddress());
             Map<String,Object> data = new HashMap<>();
             data.put("userInfo",info);
             if(userUuid != null){
@@ -249,6 +272,9 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
         userTable.setUserGender(user.getUserGender());
         userTable.setUserUuid(user.getUserUuid());
         userTable.setUserRole(user.getUserRole());
+        userTable.setUndergraduateSchool(user.getUndergraduateSchool());
+        userTable.setUserAddress(user.getUserAddress());
+        userTable.setUserHeadimg(user.getUserHeadimg());
         String oldRole = getOne(new LambdaQueryWrapper<UserTable>().eq(UserTable::getUserUuid,user.getUserUuid()).select(UserTable::getUserRole)).getUserRole();
         try{
              //判断当前用户的角色是否有相关的身份
@@ -359,7 +385,7 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                     .like(UserTable::getUserPhone,userPhone)
                     .like(UserTable::getUserEmail,userEmail)
                     .leftJoin(CandidateTable.class,CandidateTable::getUserUuid,UserTable::getUserUuid)
-                    .select(CandidateTable::getCandidateUuid,CandidateTable::getCandidateId,CandidateTable::getCandidateStatus,CandidateTable::getExamPlace,CandidateTable::getMajorUuid)
+                    .select(CandidateTable::getCandidateUuid,CandidateTable::getCandidateId,CandidateTable::getCandidateStatus,CandidateTable::getExamPlace,CandidateTable::getMajorUuid,CandidateTable::getInformationStatus,CandidateTable::getExamDate)
                     .like(CandidateTable::getMajorUuid,majorUuid)
                     .like(CandidateTable::getCandidateId,candidateId)
                     .like(CandidateTable::getCandidateStatus,candidateStatus)
@@ -375,12 +401,16 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                 map.put("userRole",userAll.getUserRole());
                 map.put("userGender",userAll.getUserGender());
                 map.put("userAge",userAll.getUserAge());
+                map.put("userAddress",userAll.getUserAddress());
+                map.put("userHeadimg",userAll.getUserHeadimg());
                 map.put("majorUuid",userAll.getMajorUuid());
                 map.put("majorName",majorTableService.getById(userAll.getMajorUuid()).getMajorName());
                 map.put("candidateUuid",userAll.getCandidateUuid());
                 map.put("candidateId",userAll.getCandidateId());
                 map.put("candidateStatus",userAll.getCandidateStatus());
                 map.put("examPlace",userAll.getExamPlace());
+                map.put("examDate",userAll.getExamDate());
+                map.put("undergraduateSchool",userAll.getUndergraduateSchool());
                 map.put("createDate", Datetime.format(userAll.getCreateDate()));
                 map.put("updateDate",Datetime.format(userAll.getUpdateDate()));
                 //查询考生初试成绩各科总成绩
@@ -398,7 +428,7 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                 examScoreTableQueryWrapper.select("IFNULL(sum(exam_score),0) as thirdScore").eq("user_uuid",userAll.getUserUuid()).eq("exam_type","2");
                 examScoreMap = examScoreTableService.getMap(examScoreTableQueryWrapper);
                 map.put("thirdScore",examScoreMap.get("thirdScore"));
-                map.put("confirmStatus",userAll.getConfirmStatus());
+                map.put("informationStatus",userAll.getInformationStatus());
                 return map;
             }).collect(Collectors.toList());
             Map<String,Object> map = new HashMap<>();
@@ -425,6 +455,9 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
             userTable.setUserEmail(userAll.getUserEmail());
             userTable.setUserGender(userAll.getUserGender());
             userTable.setUserRole(userAll.getUserRole());
+            userTable.setUndergraduateSchool(userAll.getUndergraduateSchool());
+            userTable.setUserHeadimg(userAll.getUserHeadimg());
+            userTable.setUserAddress(userAll.getUserAddress());
             boolean result = updateById(userTable);
             if(result){
                 CandidateTable candidateTable = new CandidateTable();
@@ -434,7 +467,8 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                 candidateTable.setCandidateId(userAll.getCandidateId());
                 candidateTable.setCandidateStatus(userAll.getCandidateStatus());
                 candidateTable.setExamPlace(userAll.getExamPlace());
-                candidateTable.setConfirmStatus(userAll.getConfirmStatus());
+                candidateTable.setInformationStatus(userAll.getInformationStatus());
+                candidateTable.setExamDate(userAll.getExamDate());
                 result = candidateTableService.updateById(candidateTable);
                 if(result){
                     return Rest.success(msg,true);
@@ -472,7 +506,10 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                 map.put("userEmail",userAll.getUserEmail());
                 map.put("userRole",userAll.getUserRole());
                 map.put("userGender",userAll.getUserGender());
+                map.put("userHeadimg",userAll.getUserHeadimg());
+                map.put("userAddress",userAll.getUserAddress());
                 map.put("userAge",userAll.getUserAge());
+                map.put("undergraduateSchool",userAll.getUndergraduateSchool());
                 map.put("majorUuid",userAll.getMajorUuid());
                 map.put("majorName",majorTableService.getById(userAll.getMajorUuid()).getMajorName());
                 map.put("studentUuid",userAll.getStudentUuid());
@@ -507,6 +544,9 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
             userTable.setUserEmail(userAll.getUserEmail());
             userTable.setUserGender(userAll.getUserGender());
             userTable.setUserRole(userAll.getUserRole());
+            userTable.setUserHeadimg(userAll.getUserHeadimg());
+            userTable.setUserAddress(userAll.getUserAddress());
+            userTable.setUndergraduateSchool(userAll.getUndergraduateSchool());
             boolean result = updateById(userTable);
             if (result) {
                 StudentTable studentTable = new StudentTable();
@@ -554,6 +594,9 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                 map.put("userEmail",userAll.getUserEmail());
                 map.put("userRole",userAll.getUserRole());
                 map.put("userGender",userAll.getUserGender());
+                map.put("undergraduateSchool",userAll.getUndergraduateSchool());
+                map.put("userHeadimg",userAll.getUserHeadimg());
+                map.put("userAddress",userAll.getUserAddress());
                 map.put("userAge",userAll.getUserAge());
                 map.put("teacherUuid",userAll.getTeacherUuid());
                 map.put("teacherId",userAll.getTeacherId());
@@ -590,6 +633,9 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
             userTable.setUserEmail(userAll.getUserEmail());
             userTable.setUserGender(userAll.getUserGender());
             userTable.setUserRole(userAll.getUserRole());
+            userTable.setUserHeadimg(userAll.getUserHeadimg());
+            userTable.setUserAddress(userAll.getUserAddress());
+            userTable.setUndergraduateSchool(userAll.getUndergraduateSchool());
             boolean result = updateById(userTable);
             if (result) {
                 TeacherTable teacherTable = new TeacherTable();

@@ -48,6 +48,9 @@ public class WorkFlowTable implements Serializable {
     @TableField("work_flow_type")
     private String workFlowType;
 
+    @TableField("work_flow_path")
+    private String workFlowPath;
+
     @TableField(value = "create_date", fill = FieldFill.INSERT)
     @ExcelProperty("创建时间")
     private Timestamp createDate;

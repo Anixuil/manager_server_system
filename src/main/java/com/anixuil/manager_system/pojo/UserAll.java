@@ -23,6 +23,8 @@ public class UserAll {
     @ExcelProperty("年龄")
     private Integer userAge;
     private String candidateUuid;
+    @ExcelProperty("本科院校")
+    private String undergraduateSchool;
     @ExcelProperty("专业")
     private String majorName;
     private String majorUuid;
@@ -32,11 +34,16 @@ public class UserAll {
     private String candidateStatus;
     @ExcelProperty("考试地点")
     private String examPlace;
+    @ExcelProperty("考试日期")
+    private String examDate;
     private String teacherUuid;
     @ExcelProperty("密码")
     private String userPassword;
 
-    private String confirmStatus;
+    private String userHeadimg;
+    private String informationStatus;
+    @ExcelProperty("地址")
+    private String userAddress;
 
     private String departUuid;
     @ExcelProperty("院系")

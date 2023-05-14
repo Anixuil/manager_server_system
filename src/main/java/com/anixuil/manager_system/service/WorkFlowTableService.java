@@ -19,5 +19,5 @@ public interface WorkFlowTableService extends IService<WorkFlowTable> {
 
     Rest deleteWorkFlow(WorkFlowTable workFlowTable);
 
-    Rest getWorkFlowList(Integer pageNum, Integer pageSize,String workFlowUuid,String workFlowTitle, String workFlowDesc, String workFlowType);
+    Rest getWorkFlowList(Integer pageNum, Integer pageSize,String workFlowUuid,String workFlowTitle, String workFlowDesc, String workFlowType,Boolean workFlowStatus);
 }
