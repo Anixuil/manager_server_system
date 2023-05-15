@@ -106,6 +106,7 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
             userTable.setUserGender(user.getUserGender());
             userTable.setUserHeadimg(user.getUserHeadimg());
             userTable.setUserAddress(user.getUserAddress());
+            userTable.setUndergraduateSchool(user.getUndergraduateSchool());
             if(user.getUserRole() == null) {
                 userTable.setUserRole("candidate");
                 user.setUserRole("candidate");
