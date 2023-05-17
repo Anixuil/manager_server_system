@@ -191,7 +191,9 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                 info.put("teacherUuid",teacherTable.getTeacherUuid());
                 info.put("teacherId",teacherTable.getTeacherId());
                 info.put("departUuid",teacherTable.getDepartUuid());
+                info.put("departName",departTableService.getById(teacherTable.getDepartUuid()).getDepartName());
                 info.put("classUuid",teacherTable.getClassUuid());
+                info.put("className",classTableService.getById(teacherTable.getClassUuid()).getClassName());
                 info.put("teacherIntro",teacherTable.getTeacherIntro());
             }
             if(role.equals("student")){
@@ -201,6 +203,7 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                 info.put("studentUuid",studentTable.getStudentUuid());
                 info.put("studentId",studentTable.getStudentId());
                 info.put("majorUuid",studentTable.getMajorUuid());
+                info.put("majorName",majorTableService.getById(studentTable.getMajorUuid()).getMajorName());
                 info.put("entryDate",studentTable.getEntryDate());
                 info.put("graduationDate",studentTable.getGraduationDate());
             }
