@@ -36,8 +36,8 @@ public class WorkFlowTable implements Serializable {
     @TableField("work_flow_desc")
     private String workFlowDesc;
 
-    @TableField("work_flow_image")
-    private String workFlowImage;
+    @TableField("work_flow_date")
+    private String workFlowDate;
 
     @TableField("work_flow_index")
     private Integer workFlowIndex;

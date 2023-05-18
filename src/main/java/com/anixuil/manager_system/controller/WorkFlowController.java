@@ -44,4 +44,18 @@ public class WorkFlowController {
         return workFlowTableService.getWorkFlowList(pageNum, pageSize,workFlowUuid, workFlowTitle, workFlowDesc, workFlowType, workFlowStatus);
     }
 
+    //研招时间线
+    @GetMapping("getYanZhaoTimeLine")
+    public Rest getYanZhaoTimeLine(
+            @RequestParam(defaultValue = "1") Integer pageNum,
+            @RequestParam(defaultValue = "10") Integer pageSize,
+            @RequestParam(defaultValue = "") String workFlowUuid,
+            @RequestParam(defaultValue = "") String workFlowTitle,
+            @RequestParam(defaultValue = "") String workFlowDesc,
+            @RequestParam(defaultValue = "") String workFlowType,
+            @RequestParam(defaultValue = "") Boolean workFlowStatus
+    ) {
+        return workFlowTableService.getWorkFlowList(pageNum, pageSize, workFlowUuid, workFlowTitle, workFlowDesc, workFlowType, workFlowStatus);
+    }
+
 }

@@ -82,7 +82,8 @@ public class WorkFlowTableServiceImpl extends ServiceImpl<WorkFlowTableMapper, W
             queryWrapper.like(WorkFlowTable::getWorkFlowTitle,workFlowTitle)
                     .like(WorkFlowTable::getWorkFlowDesc,workFlowDesc)
                     .like(WorkFlowTable::getWorkFlowUuid,workFlowUuid)
-                    .like(WorkFlowTable::getWorkFlowType,workFlowType);
+                    .like(WorkFlowTable::getWorkFlowType,workFlowType)
+                    .orderByAsc(WorkFlowTable::getWorkFlowIndex);
             if(workFlowStatus != null){
                 queryWrapper.eq(WorkFlowTable::getWorkFlowStatus,workFlowStatus);
             }
@@ -94,6 +95,7 @@ public class WorkFlowTableServiceImpl extends ServiceImpl<WorkFlowTableMapper, W
                 map.put("workFlowTitle",workFlowTable.getWorkFlowTitle());
                 map.put("workFlowDesc",workFlowTable.getWorkFlowDesc());
                 map.put("workFlowStatus",workFlowTable.getWorkFlowStatus());
+                map.put("workFlowDate",workFlowTable.getWorkFlowDate());
                 map.put("workFlowIndex",workFlowTable.getWorkFlowIndex());
                 map.put("workFlowType",workFlowTable.getWorkFlowType());
                 map.put("workFlowPath",workFlowTable.getWorkFlowPath());

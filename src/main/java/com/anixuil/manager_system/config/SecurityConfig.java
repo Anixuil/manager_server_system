@@ -45,7 +45,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/noticeInfo/getNoticeList",
                         "/noticeInfo/getOne",
                         "/public/**",
-                        "/file/download/**"
+                        "/file/download/**",
+                        "/workFlow/getYanZhaoTimeLine"
                 ).anonymous()
                 //其他接口需要认证
                 .anyRequest().authenticated();
