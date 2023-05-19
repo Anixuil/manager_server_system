@@ -247,19 +247,25 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
 
     //修改密码
     @Override
-    public Rest updatePwd(UserTable userTable) {
+    public Rest updatePwd(String token, String oldPwd, String newPwd) {
         String msg = "修改密码";
         try{
-            if(verifyUser(userTable)){
-                String password = userTable.getUserPassword();
+            JwtUtils jwtUtils = new JwtUtils();
+            String userUuid = jwtUtils.parseJWT(token).getSubject();
+            UserTable userTable = userTableMapper.selectOne(
+                    new LambdaQueryWrapper<UserTable>().eq(UserTable::getUserUuid,userUuid)
+            );
+            //验证旧密码是否正确
+            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+            if(bCryptPasswordEncoder.matches(oldPwd,userTable.getUserPassword())){
                 //加密
-                BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-                password = bCryptPasswordEncoder.encode(password);
-                userTable.setUserPassword(password);
-                userTableMapper.update(userTable,new LambdaQueryWrapper<UserTable>().eq(UserTable::getUserUuid,userTable.getUserUuid()));
+                newPwd = bCryptPasswordEncoder.encode(newPwd);
+                userTable.setUserPassword(newPwd);
+                userTableMapper.update(userTable,new LambdaQueryWrapper<UserTable>().eq(UserTable::getUserUuid,userUuid));
                 return Rest.success(msg,null);
+            }else{
+                return Rest.fail(msg,"旧密码错误");
             }
-            return Rest.fail(msg,null);
         }catch (Exception e){
             return Rest.error(msg,e);
         }

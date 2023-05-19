@@ -1,22 +1,13 @@
 package com.anixuil.manager_system.controller;
 
 import com.anixuil.manager_system.entity.Rest;
-import com.anixuil.manager_system.entity.UserDetail;
 import com.anixuil.manager_system.entity.UserTable;
 import com.anixuil.manager_system.pojo.UserAll;
 import com.anixuil.manager_system.service.UserTableService;
-import com.anixuil.manager_system.utils.JwtUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("user")
@@ -43,8 +34,10 @@ public class UserController {
 
     //修改密码
     @PutMapping("updatePwd")
-    public Rest updatePwd(@RequestBody UserTable userTable){
-        return userTableService.updatePwd(userTable);
+    public Rest updatePwd(@RequestHeader("token") String token,@RequestBody Map<String,Object> map){
+        String oldPassword = (String) map.get("oldPassword");
+        String newPassword = (String) map.get("newPassword");
+        return userTableService.updatePwd(token,oldPassword,newPassword);
     }
 
     //修改用户信息

@@ -28,7 +28,7 @@ public interface UserTableService extends IService<UserTable> {
     Boolean verifyUser(UserTable userTable);
 
     //修改密码
-    Rest updatePwd(UserTable userTable);
+    Rest updatePwd(String token, String oldPwd, String newPwd);
 
     //修改用户信息
     Rest updateUserInfo(UserAll user);
