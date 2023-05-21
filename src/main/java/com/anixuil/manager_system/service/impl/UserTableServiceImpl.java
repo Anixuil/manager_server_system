@@ -1,8 +1,7 @@
 package com.anixuil.manager_system.service.impl;
 
 import com.anixuil.manager_system.entity.*;
-import com.anixuil.manager_system.mapper.ExamClassTableMapper;
-import com.anixuil.manager_system.mapper.UserTableMapper;
+import com.anixuil.manager_system.mapper.*;
 import com.anixuil.manager_system.pojo.UserAll;
 import com.anixuil.manager_system.service.*;
 import com.anixuil.manager_system.utils.Datetime;
@@ -68,6 +67,15 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
 
         @Resource
         ClassTableService classTableService;
+
+        @Resource
+        CandidateTableMapper candidateTableMapper;
+
+        @Resource
+        StudentTableMapper studentTableMapper;
+
+        @Resource
+        WorkFlowTableMapper workFlowTableMapper;
 
         //用户登录
         @Override
@@ -181,7 +189,12 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                 examScoreMap = examScoreTableService.getMap(examScoreTableQueryWrapper);
                 info.put("thirdScore",examScoreMap.get("thirdScore"));
                 info.put("informationStatus",candidateTable.getInformationStatus());
-                info.put("examDate",candidateTable.getExamDate());
+                WorkFlowTable workFlowTable = workFlowTableMapper.selectOne(new LambdaQueryWrapper<WorkFlowTable>()
+                        .select(WorkFlowTable::getWorkFlowDate)
+                        .eq(WorkFlowTable::getWorkFlowType,candidateTable.getCandidateStatus())
+                        .orderByDesc(WorkFlowTable::getWorkFlowDate)
+                        .last("limit 1"));
+                info.put("examDate",workFlowTable.getWorkFlowDate());
                 System.out.println(candidateTable.getInformationStatus());
             }
             if(role.equals("teacher")){
@@ -291,49 +304,58 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                 String newRole = userTable.getUserRole();
                 //如果角色没有改变，就不做处理
                 if(!oldRole.equals(newRole)){
-                    boolean delFlag = false;
-                    boolean addFlag = false;
                     switch (oldRole) {
                         case "candidate": {
-                            //如果是考生，就删除考生信息
-                            LambdaQueryWrapper<CandidateTable> wrapper = new LambdaQueryWrapper<>();
-                            wrapper.eq(CandidateTable::getUserUuid, userTable.getUserUuid());
-                            delFlag = candidateTableService.remove(wrapper);
+//                            //如果是考生，就删除考生信息
+                            if(newRole.equals("teacher")){
+                                LambdaQueryWrapper<CandidateTable> wrapper = new LambdaQueryWrapper<>();
+                                wrapper.eq(CandidateTable::getUserUuid, userTable.getUserUuid());
+                                candidateTableService.remove(wrapper);
+                            }
                             break;
                         }
                         case "student": {
-                            //如果是学生，就删除学生信息
-                            LambdaQueryWrapper<StudentTable> wrapper = new LambdaQueryWrapper<>();
-                            wrapper.eq(StudentTable::getUserUuid, userTable.getUserUuid());
-                            delFlag = studentTableService.remove(wrapper);
+                            if(newRole.equals("teacher")){
+                                LambdaQueryWrapper<StudentTable> wrapper = new LambdaQueryWrapper<>();
+                                wrapper.eq(StudentTable::getUserUuid, userTable.getUserUuid());
+                                studentTableService.remove(wrapper);
+                            }
                             break;
                         }
                         case "teacher": {
                             //如果是教师，就删除教师信息
                             LambdaQueryWrapper<TeacherTable> wrapper = new LambdaQueryWrapper<>();
                             wrapper.eq(TeacherTable::getUserUuid, userTable.getUserUuid());
-                            delFlag = teacherTableService.remove(wrapper);
+                            teacherTableService.remove(wrapper);
                             break;
                         }
                     }
                     switch (newRole) {
                         case "candidate":
                             //如果是考生，就创建考生信息
-                            addFlag = candidateTableService.addCandidate(user);
+                            LambdaQueryWrapper<CandidateTable> wrapper = new LambdaQueryWrapper<>();
+                            wrapper.eq(CandidateTable::getUserUuid, userTable.getUserUuid());
+                            if(!candidateTableMapper.exists(wrapper)){
+                                candidateTableService.addCandidate(user);
+                            }
                             break;
                         case "student":
-                            //如果是学生，就创建学生信息
-                            addFlag = studentTableService.addStudent(user);
+                            LambdaQueryWrapper<StudentTable> wrapper1 = new LambdaQueryWrapper<>();
+                            wrapper1.eq(StudentTable::getUserUuid, userTable.getUserUuid());
+                            System.out.println(!studentTableMapper.exists(wrapper1));
+                            if(!studentTableMapper.exists(wrapper1)){
+                                System.out.println("添加学生信息");
+                                studentTableService.addStudent(user);
+                            }
                             break;
                         case "teacher":
                             //如果是教师，就创建教师信息
-                            addFlag = teacherTableService.addTeacher(user);
+                            teacherTableService.addTeacher(user);
                             break;
                     }
-                    if(addFlag || delFlag){
+
                         update(userTable,new LambdaQueryWrapper<UserTable>().eq(UserTable::getUserUuid,userTable.getUserUuid()));
                         return Rest.success(msg,true);
-                    }
                 }
             return Rest.fail(msg,null);
         }catch (Exception e){
@@ -419,7 +441,12 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                 map.put("candidateId",userAll.getCandidateId());
                 map.put("candidateStatus",userAll.getCandidateStatus());
                 map.put("examPlace",userAll.getExamPlace());
-                map.put("examDate",userAll.getExamDate());
+                WorkFlowTable workFlowTable = workFlowTableMapper.selectOne(new LambdaQueryWrapper<WorkFlowTable>()
+                        .select(WorkFlowTable::getWorkFlowDate)
+                        .eq(WorkFlowTable::getWorkFlowType,userAll.getCandidateStatus())
+                        .orderByDesc(WorkFlowTable::getWorkFlowDate)
+                        .last("limit 1"));
+                map.put("examDate",workFlowTable.getWorkFlowDate());
                 map.put("undergraduateSchool",userAll.getUndergraduateSchool());
                 map.put("createDate", Datetime.format(userAll.getCreateDate()));
                 map.put("updateDate",Datetime.format(userAll.getUpdateDate()));
@@ -479,6 +506,21 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                 candidateTable.setExamPlace(userAll.getExamPlace());
                 candidateTable.setInformationStatus(userAll.getInformationStatus());
                 candidateTable.setExamDate(userAll.getExamDate());
+                //根据变化的考生状态，修改考生informationStatus
+                switch (candidateTable.getCandidateStatus()){
+                    case "0":
+                        candidateTable.setInformationStatus("00");
+                        break;
+                    case "1":
+                        candidateTable.setInformationStatus("01");
+                        break;
+                        case "2":
+                        candidateTable.setInformationStatus("11");
+                        break;
+                        case "3":
+                        candidateTable.setInformationStatus("21");
+                        break;
+                }
                 result = candidateTableService.updateById(candidateTable);
                 if(result){
                     return Rest.success(msg,true);

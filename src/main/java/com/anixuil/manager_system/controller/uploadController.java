@@ -19,10 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @RestController
@@ -183,23 +180,32 @@ public class uploadController {
                             switch (item.getUserRole()){
                                 case "student":
                                     //检查学生信息必填项是否为空
-                                    if(item.getStudentId() == null || item.getMajorName() == null || item.getEntryDate() == null || item.getGraduationDate() == null){
+                                    if(item.getMajorName() == null || item.getEntryDate() == null || item.getGraduationDate() == null){
                                         failList.add(item.getUserName());
                                         flag = false;
+                                    }else{
+                                        //生成学生id
+                                        item.setStudentId(String.valueOf(new Date().getTime()));
                                     }
                                     break;
                                 case "candidate":
                                     //检查考生信息必填项是否为空
-                                    if(item.getCandidateId() == null || item.getMajorName() == null || item.getCandidateStatus() == null){
+                                    if(item.getMajorName() == null || item.getCandidateStatus() == null){
                                         failList.add(item.getUserName());
                                         flag = false;
+                                    }else{
+                                        //生成考生id
+                                        item.setCandidateId(String.valueOf(new Date().getTime()));
                                     }
                                     break;
                                 case "teacher":
                                     //检查教师信息必填项是否为空
-                                    if(item.getTeacherId() == null || item.getTeacherIntro() == null || item.getDepartName() == null || item.getClassName() == null){
+                                    if(item.getTeacherIntro() == null || item.getDepartName() == null || item.getClassName() == null){
                                         failList.add(item.getUserName());
                                         flag = false;
+                                    }else{
+                                        //生成教师id
+                                        item.setTeacherId(String.valueOf(new Date().getTime()));
                                     }
                                     break;
                             }

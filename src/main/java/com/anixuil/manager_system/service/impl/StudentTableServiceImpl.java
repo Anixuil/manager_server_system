@@ -29,7 +29,7 @@ public class StudentTableServiceImpl extends ServiceImpl<StudentTableMapper, Stu
     public Boolean addStudent(UserAll user) {
         try{
             StudentTable studentTable = new StudentTable();
-            if(user.getStudentId().isEmpty()) {
+            if(user.getStudentId() == null) {
                 studentTable.setStudentId(String.valueOf(new Date().getTime()));
             }else{
                 studentTable.setStudentId(user.getStudentId());

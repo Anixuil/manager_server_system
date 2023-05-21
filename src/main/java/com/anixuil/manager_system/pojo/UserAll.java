@@ -65,4 +65,10 @@ public class UserAll {
     private Timestamp createDate;
     private Timestamp updateDate;
 
+    //relation
+    private String relationUuid;
+    private String stuUserUuid;
+    private String teachUserUuid;
+    private String relationType;
+
 }

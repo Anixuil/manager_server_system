@@ -30,7 +30,7 @@ public class CandidateTableServiceImpl extends ServiceImpl<CandidateTableMapper,
     public Boolean addCandidate(UserAll user) {
         try{
             CandidateTable candidateTable = new CandidateTable();
-            if(user.getCandidateId().isEmpty()) {
+            if(user.getCandidateId() == null) {
                 candidateTable.setCandidateId(String.valueOf(new Date().getTime()));
             }else{
                 candidateTable.setCandidateId(user.getCandidateId());

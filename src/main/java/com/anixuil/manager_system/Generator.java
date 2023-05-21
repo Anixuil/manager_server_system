@@ -56,6 +56,7 @@ public class Generator {
         tables.add("dict_table");
         tables.add("dict_field_table");
         tables.add("attachment_table");
+        tables.add("stu_teach_relation_table");
         //开始生成
         FastAutoGenerator.create(url,username,password)
                 //全局配置
