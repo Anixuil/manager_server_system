@@ -135,14 +135,11 @@
 
       <div id="content">
         <div id="content_top">
-          <strong>【中南林业科技大学涉外学院研究生招生处】：未来的林涉外学子，您好！</strong>
+          <strong>【中南林业科技大学涉外学院研究生招生处】：未来的林涉外学子  <span th:text="${userName}"></span>  ，您好！</strong>
           <strong th:text="${title}">
             ${title}
           </strong>
-<!--          <div id="verificationCode">-->
-<!--            <button class="button" style="transition: all .3s ease !important;color:white !important;" th:each="a:${verifyCode}">[[${a}]]</button>-->
-<!--          </div>-->
-          <div id="emailContent" th:text="${content}">
+          <div id="emailContent" th:utext="${content}">
             ${content}
           </div>
         </div>
@@ -158,7 +155,6 @@
           <p>此为系统邮件，请勿回复<br>
             请保管好您的邮箱，避免账号被他人盗用
           </p>
-          <!--                    <p id="sign">——POLAR官方</p>-->
         </div>
       </div>
     </td>

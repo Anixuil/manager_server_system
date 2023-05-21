@@ -504,23 +504,27 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                 candidateTable.setCandidateId(userAll.getCandidateId());
                 candidateTable.setCandidateStatus(userAll.getCandidateStatus());
                 candidateTable.setExamPlace(userAll.getExamPlace());
-                candidateTable.setInformationStatus(userAll.getInformationStatus());
                 candidateTable.setExamDate(userAll.getExamDate());
-                //根据变化的考生状态，修改考生informationStatus
-                switch (candidateTable.getCandidateStatus()){
-                    case "0":
-                        candidateTable.setInformationStatus("00");
-                        break;
-                    case "1":
-                        candidateTable.setInformationStatus("01");
-                        break;
+                candidateTable.setInformationStatus(userAll.getInformationStatus());
+                //如果考生的考试状态与数据库的不同，则覆盖
+                if(!userAll.getCandidateStatus().equals(candidateTableService.getById(userAll.getCandidateUuid()).getCandidateStatus())){
+                    //根据变化的考生状态，修改考生informationStatus
+                    switch (candidateTable.getCandidateStatus()){
+                        case "0":
+                            candidateTable.setInformationStatus("00");
+                            break;
+                        case "1":
+                            candidateTable.setInformationStatus("01");
+                            break;
                         case "2":
-                        candidateTable.setInformationStatus("11");
-                        break;
+                            candidateTable.setInformationStatus("11");
+                            break;
                         case "3":
-                        candidateTable.setInformationStatus("21");
-                        break;
+                            candidateTable.setInformationStatus("21");
+                            break;
+                    }
                 }
+
                 result = candidateTableService.updateById(candidateTable);
                 if(result){
                     return Rest.success(msg,true);

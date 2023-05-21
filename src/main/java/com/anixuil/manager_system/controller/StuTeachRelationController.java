@@ -6,6 +6,7 @@ import com.anixuil.manager_system.service.StudentTableService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/stuTeachRelation")
@@ -27,8 +28,9 @@ public class StuTeachRelationController {
     @PostMapping("/chooseTeacher")
     public Rest chooseTeacher(
             @RequestHeader("token") String token,
-            @RequestParam("teacherUuid") String teacherUuid
+            @RequestBody Map<String,Object> map
     ){
+        String teacherUuid = (String) map.get("teacherUuid");
         return stuTeachRelationTableService.chooseTeacher(token,teacherUuid);
     }
 
@@ -36,9 +38,10 @@ public class StuTeachRelationController {
     @PostMapping("/agree")
     public Rest agree(
             @RequestHeader("token") String token,
-            @RequestParam("relationUuid") String relationUuid,
-            @RequestParam("relationType") String relationType
+            @RequestBody Map<String,Object> map
     ){
+        String relationUuid = (String) map.get("relationUuid");
+        String relationType = (String) map.get("relationType");
         return stuTeachRelationTableService.agree(token,relationUuid,relationType);
     }
 

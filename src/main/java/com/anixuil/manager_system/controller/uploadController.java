@@ -256,6 +256,7 @@ public class uploadController {
                                     userTable.setUserGender(item.getUserGender());
                                     userTable.setUserEmail(item.getUserEmail());
                                     userTable.setUserPhone(item.getUserPhone());
+                                    userTable.setUndergraduateSchool(item.getUndergraduateSchool());
                                     userTableMapper.insert(userTable);
                                     String userUuid = userTableMapper.selectOne(userWrapper).getUserUuid();
                                     //根据用户身份信息存入对应的表

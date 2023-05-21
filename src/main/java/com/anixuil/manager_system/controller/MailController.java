@@ -54,20 +54,20 @@ public class MailController {
             return userTableService.getOne(wrapper1);
         }).collect(Collectors.toList());
         //获取考生的邮箱
-        List<String> emailList = userTableList.stream().map(UserTable::getUserEmail).collect(Collectors.toList());
+//        List<String> emailList = userTableList.stream().map(UserTable::getUserEmail).collect(Collectors.toList());
         String emailTitle = emailOption.get("emailTitle").toString(); //获取邮件标题
         String emailContent = emailOption.get("emailContent").toString(); //获取邮件内容
         AtomicInteger resultOk = new AtomicInteger();
         AtomicInteger resultError = new AtomicInteger();
         List<String> emailErrorList = new ArrayList<>();
         Map<String,Object> res = new HashMap<>();
-            emailList.forEach(email -> {
-                boolean result = mailService.sendAttachmentsMail(email,emailTitle,emailContent,null);
+            userTableList.forEach(userTable -> {
+                boolean result = mailService.sendAttachmentsMail(userTable,emailTitle,emailContent,null);
                 if(result){
                     resultOk.getAndIncrement();
                 }else{
                     resultError.getAndIncrement();
-                    emailErrorList.add(email);
+                    emailErrorList.add(userTable.getUserName());
                 }
             });
             res.put("resultOk",resultOk);

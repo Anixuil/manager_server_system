@@ -77,6 +77,7 @@ public class StuTeachRelationTableServiceImpl extends ServiceImpl<StuTeachRelati
                         map.put("userEmail",userTable1.getUserEmail());
                         map.put("userGender",userTable1.getUserGender());
                         map.put("userAge",userTable1.getUserAge());
+                        map.put("undergraduateSchool",userTable1.getUndergraduateSchool());
                         //然后看关系表里是否有对应的关系
                         List<StuTeachRelationTable> stuTeachRelationTableList = list(
                                 new LambdaQueryWrapper<StuTeachRelationTable>().eq(StuTeachRelationTable::getTeachUserUuid,userTable1.getUserUuid())
@@ -96,6 +97,7 @@ public class StuTeachRelationTableServiceImpl extends ServiceImpl<StuTeachRelati
                                 map1.put("userGender",userTable2.getUserGender());
                                 map1.put("userAge",userTable2.getUserAge());
                                 map1.put("parentUuid",userTable1.getUserUuid());
+                                map1.put("undergraduateSchool",userTable2.getUndergraduateSchool());
                                 return map1;
                             }).collect(Collectors.toList());
                             map.put("children",mapList1);
@@ -113,12 +115,16 @@ public class StuTeachRelationTableServiceImpl extends ServiceImpl<StuTeachRelati
                     //查询当前学生的所有关系
                     StuTeachRelationTable stuTeachRelationTable = getOne(
                             new LambdaQueryWrapper<StuTeachRelationTable>().eq(StuTeachRelationTable::getStuUserUuid,userTable.getUserUuid())
+                                    .notLike(StuTeachRelationTable::getRelationType,"2")
                     );
                     //如果没有关系
                     if(stuTeachRelationTable == null){
                         return Rest.success(msg,result);
                     }
-                    //如果有关系
+                    //如果有关系 判断是否是拒绝关系
+                    if(stuTeachRelationTable.getRelationType().equals("2")){
+                        return Rest.success(msg,result);
+                    }
                     //取出教师信息
                     UserTable userTable1 = userTableMapper.selectOne(
                             new LambdaQueryWrapper<UserTable>().eq(UserTable::getUserUuid,stuTeachRelationTable.getTeachUserUuid())
@@ -147,6 +153,7 @@ public class StuTeachRelationTableServiceImpl extends ServiceImpl<StuTeachRelati
                     ).getClassName());
                     map.put("teacherIntro",teacherTable.getTeacherIntro());
                     map.put("relationType",stuTeachRelationTable.getRelationType());
+                    map.put("relationUuid",stuTeachRelationTable.getRelationUuid());
                     result.put("teacherData",map);
                     break;
                 //如果没有关系
@@ -172,6 +179,7 @@ public class StuTeachRelationTableServiceImpl extends ServiceImpl<StuTeachRelati
                         map2.put("userHeadimg",userTable3.getUserHeadimg());
                         map2.put("undergraduateSchool",userTable3.getUndergraduateSchool());
                         map2.put("relationType",stuTeachRelationTable2.getRelationType());
+                        map2.put("relationUuid",stuTeachRelationTable2.getRelationUuid());
                         return map2;
                     }).collect(Collectors.toList());
                     result.put("total",stuTeachRelationTableIPage.getTotal());

@@ -1,5 +1,6 @@
 package com.anixuil.manager_system.service.impl;
 
+import com.anixuil.manager_system.entity.UserTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -49,18 +50,19 @@ public class MailService {
     }
 
 
-    public boolean sendAttachmentsMail(String to, String title, String content, List<File> fileList){
+    public boolean sendAttachmentsMail(UserTable userTable, String title, String content, List<File> fileList){
         Context context = new Context();    //引入Template的Context
 //        context.setVariable("verifyCode", Arrays.asList(content.split("")));   //设置变量
         context.setVariable("title", title);   //设置变量
         context.setVariable("content", content);   //设置变量
+        context.setVariable("userName", userTable.getUserName());   //设置变量
         //第一个参数为模板的名称
         String process = templateEngine.process("EmailInform.html", context);
         MimeMessage message = mailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message,true);
             helper.setFrom(from);
-            helper.setTo(to);
+            helper.setTo(userTable.getUserEmail());
             helper.setSubject(title);
             helper.setText(process,true);
             String fileName = null;
