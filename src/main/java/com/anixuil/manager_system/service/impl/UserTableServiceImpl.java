@@ -77,6 +77,9 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
         @Resource
         WorkFlowTableMapper workFlowTableMapper;
 
+        @Resource
+        StuTeachRelationTableMapper stuTeachRelationTableMapper;
+
         //用户登录
         @Override
         public Rest login(UserTable userTable){
@@ -368,6 +371,12 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
         String msg = "删除用户";
         try{
                 String role = getOne(new LambdaQueryWrapper<UserTable>().eq(UserTable::getUserUuid,userTable.getUserUuid()).select(UserTable::getUserRole)).getUserRole();
+                //判断当前用户是否拥有关系
+            LambdaQueryWrapper<StuTeachRelationTable> wrapper1 = new LambdaQueryWrapper<>();
+            wrapper1.eq(StuTeachRelationTable::getTeachUserUuid,userTable.getUserUuid());
+                if(stuTeachRelationTableMapper.selectCount(wrapper1) > 0){
+                    return Rest.fail(msg,"该用户有关系，不能删除");
+                }
                 boolean flag;
                 switch (role){
                     case "candidate":{
