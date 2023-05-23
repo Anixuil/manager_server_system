@@ -101,6 +101,8 @@ public class StuTeachRelationTableServiceImpl extends ServiceImpl<StuTeachRelati
                                 return map1;
                             }).collect(Collectors.toList());
                             map.put("children",mapList1);
+                        }else{
+                            map.put("children",null);
                         }
                         return map;
                     }).collect(Collectors.toList());

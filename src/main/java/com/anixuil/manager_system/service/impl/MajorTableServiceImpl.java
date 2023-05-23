@@ -1,9 +1,8 @@
 package com.anixuil.manager_system.service.impl;
 
-import com.anixuil.manager_system.entity.DepartTable;
-import com.anixuil.manager_system.entity.MajorTable;
-import com.anixuil.manager_system.entity.Rest;
-import com.anixuil.manager_system.entity.StudentTable;
+import com.anixuil.manager_system.entity.*;
+import com.anixuil.manager_system.mapper.CandidateTableMapper;
+import com.anixuil.manager_system.mapper.ClassTableMapper;
 import com.anixuil.manager_system.mapper.DepartTableMapper;
 import com.anixuil.manager_system.mapper.MajorTableMapper;
 import com.anixuil.manager_system.service.DepartTableService;
@@ -39,6 +38,12 @@ public class MajorTableServiceImpl extends ServiceImpl<MajorTableMapper, MajorTa
     StudentTableService studentTableService;
     @Resource
     DepartTableMapper departTableMapper;
+
+    @Resource
+    CandidateTableMapper candidateTableMapper;
+
+    @Resource
+    ClassTableMapper classTableMapper;
 
     @Override
     public Rest addMajor(MajorTable majorTable) {
@@ -79,7 +84,17 @@ public class MajorTableServiceImpl extends ServiceImpl<MajorTableMapper, MajorTa
         String msg = "删除专业";
         try{
             String majorUuid = majorTable.getMajorUuid();
-            Boolean result = this.remove(new QueryWrapper<MajorTable>().eq("major_uuid",majorUuid));
+            //验证当前专业下是否有课程，学生、考生 如果有则不删除
+            if(classTableMapper.selectCount(new QueryWrapper<ClassTable>().eq("major_uuid",majorUuid)) > 0){
+                return Rest.fail(msg,"当前专业下有课程，不可删除");
+            }
+            if(studentTableService.count(new QueryWrapper<StudentTable>().eq("major_uuid",majorUuid)) > 0){
+                return Rest.fail(msg,"当前专业下有学生，不可删除");
+            }
+            if(candidateTableMapper.selectCount(new QueryWrapper<CandidateTable>().eq("major_uuid",majorUuid)) > 0){
+                return Rest.fail(msg,"当前专业下有考生，不可删除");
+            }
+            boolean result = removeById(majorUuid);
             if(result){
                 return Rest.success(msg, true);
             }

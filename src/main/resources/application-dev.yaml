@@ -23,13 +23,13 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
     #本地数据库
-    #    url: jdbc:mysql://localhost:3306/manager_database?useSSL=false&serverTimezone=Asia/Shanghai
-    #    username: root
-    #    password: 123456
+    url: jdbc:mysql://localhost:3306/anixuilDatabase?useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123456
     # 华为云服务器数据库
-    url: jdbc:mysql://110.41.145.35:3306/anixuilDatabase?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
-    username: anixuilDatabase
-    password: 200131
+#    url: jdbc:mysql://110.41.145.35:3306/anixuilDatabase?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+#    username: anixuilDatabase
+#    password: 200131
     druid:
       time-between-eviction-runs-millis: 30000
       min-evictable-idle-time-millis: 60000

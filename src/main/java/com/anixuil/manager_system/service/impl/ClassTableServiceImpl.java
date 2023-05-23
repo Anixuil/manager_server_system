@@ -4,6 +4,7 @@ import com.anixuil.manager_system.entity.ClassTable;
 import com.anixuil.manager_system.entity.Rest;
 import com.anixuil.manager_system.entity.TeacherTable;
 import com.anixuil.manager_system.mapper.ClassTableMapper;
+import com.anixuil.manager_system.mapper.TeacherTableMapper;
 import com.anixuil.manager_system.service.ClassTableService;
 import com.anixuil.manager_system.service.MajorTableService;
 import com.anixuil.manager_system.service.TeacherTableService;
@@ -33,6 +34,9 @@ public class ClassTableServiceImpl extends ServiceImpl<ClassTableMapper, ClassTa
 
     @Resource
     MajorTableService majorTableService;
+
+    @Resource
+    TeacherTableMapper teacherTableMapper;
 
     @Override
     public Rest addClass(ClassTable classTable) {
@@ -65,11 +69,15 @@ public class ClassTableServiceImpl extends ServiceImpl<ClassTableMapper, ClassTa
     public Rest deleteClass(ClassTable classTable) {
         String msg = "删除课程";
         try {
+            //判断当前课程下是否有老师
+            if(teacherTableMapper.selectCount(new LambdaQueryWrapper<TeacherTable>().eq(TeacherTable::getClassUuid,classTable.getClassUuid()))>0){
+                return Rest.fail(msg,"当前课程下有老师，无法删除");
+            }
             removeById(classTable.getClassUuid());
-            return new Rest(200, msg + "成功", null);
+            return Rest.success(msg, null);
         } catch (Exception e) {
             e.printStackTrace();
-            return new Rest(500, msg + "失败", null);
+            return Rest.error( msg, null);
         }
     }
 

@@ -7,7 +7,6 @@ import com.anixuil.manager_system.pojo.DepartAll;
 import com.anixuil.manager_system.pojo.UserAll;
 import com.anixuil.manager_system.pojo.UserScoreAll;
 import com.anixuil.manager_system.service.*;
-import com.anixuil.manager_system.service.impl.UserTableServiceImpl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,6 +19,7 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @RestController
@@ -69,13 +69,14 @@ public class uploadController {
                                 .doReadSync();
                         for(DepartAll item : departData){
                             if(item.getDepartName() == null){
-                                return Rest.fail(msg,"导入失败，院系名称不能为空");
+                                failList.add("院系名称为空");
+                                continue;
                             }
                             //如果院系存在
                             LambdaQueryWrapper<DepartTable> departWrapper = new LambdaQueryWrapper<>();
                             departWrapper.eq(DepartTable::getDepartName,item.getDepartName());
                             if(item.getDepartName() != null && departTableMapper.exists(departWrapper)){
-                                System.out.println("院系已存在");
+//                                System.out.println("院系已存在");
                                 DepartTable departTable = departTableMapper.selectOne(departWrapper);
                                 LambdaQueryWrapper<MajorTable> majorWrapper = new LambdaQueryWrapper<>();
                                 majorWrapper
@@ -83,18 +84,19 @@ public class uploadController {
                                         .eq(MajorTable::getMajorName,item.getMajorName());
                                 MajorTable majorTable = majorTableMapper.selectOne(majorWrapper);
                                 if(item.getMajorName() != null && majorTableMapper.exists(majorWrapper)){
-                                    System.out.println("专业已存在");
+//                                    System.out.println("专业已存在");
                                     LambdaQueryWrapper<ClassTable> classWrapper = new LambdaQueryWrapper<>();
                                     classWrapper
                                             .eq(ClassTable::getMajorUuid,majorTable.getMajorUuid())
                                             .eq(ClassTable::getClassName,item.getClassName());
-                                    ClassTable classTable = classTableMapper.selectOne(classWrapper);
+//                                    ClassTable classTable = classTableMapper.selectOne(classWrapper);
                                     if(item.getClassName() != null && classTableMapper.exists(classWrapper)) {
-                                        return Rest.fail(msg, "导入失败，院系、专业、课程已存在");
+                                        existList.add(item.getDepartName()+"-"+item.getMajorName()+"-"+item.getClassName());
+                                        continue;
                                     }else{
-                                        System.out.println("课程不存在");
+//                                        System.out.println("课程不存在");
                                         if(item.getClassName() != null){
-                                            System.out.println("课程名称不为空");
+//                                            System.out.println("课程名称不为空");
                                             ClassTable classTable1 = new ClassTable();
                                             classTable1.setClassName(item.getClassName());
                                             classTable1.setClassIntro(item.getClassIntro());
@@ -103,9 +105,9 @@ public class uploadController {
                                         }
                                     }
                                 }else{
-                                    System.out.println("专业不存在");
+//                                    System.out.println("专业不存在");
                                     if(item.getMajorName() != null){
-                                        System.out.println("专业名称不为空");
+//                                        System.out.println("专业名称不为空");
                                         MajorTable majorTable1 = new MajorTable();
                                         majorTable1.setMajorName(item.getMajorName());
                                         majorTable1.setMajorIntro(item.getMajorIntro());
@@ -127,9 +129,9 @@ public class uploadController {
                                     }
                                 }
                             }else{
-                                System.out.println("院系不存在");
+//                                System.out.println("院系不存在");
                                 if(item.getDepartName() != null){
-                                    System.out.println("院系名称不为空");
+//                                    System.out.println("院系名称不为空");
                                     //存入院系
                                     DepartTable departTable1 = new DepartTable();
                                     departTable1.setDepartName(item.getDepartName());
@@ -172,7 +174,7 @@ public class uploadController {
                             //检查用户信息必填项是否为空
                             if(item.getUserName() == null || item.getUserPassword() == null || item.getUserRole() == null || item.getUserAge() == null || item.getUserGender() == null || item.getUserPhone() == null || item.getUserEmail() == null){
                                 failList.add(item.getUserName());
-                                System.out.println("用户信息不完整");
+//                                System.out.println("用户信息不完整");
                                 continue;
                             }
                             //存储身份信息状态
@@ -211,23 +213,35 @@ public class uploadController {
                             }
                             //如果身份信息不完整则不录入
                             if(!flag){
-                                System.out.println("用户信息不完整");
+//                                System.out.println("用户信息不完整");
                                 continue;
                             }
                             //通过导入的院系、专业、课程名字获取对应的uuid
                             if(item.getClassName() != null){
                                 LambdaQueryWrapper<ClassTable> classWrapper = new LambdaQueryWrapper<>();
                                 classWrapper.eq(ClassTable::getClassName,item.getClassName()).last("limit 1");
+                                //如果课程不存在则不录入
+                                if(classTableMapper.selectOne(classWrapper) == null){
+                                    continue;
+                                }
                                 item.setClassUuid(classTableMapper.selectOne(classWrapper).getClassUuid());
                             }
                             if(item.getDepartName() != null){
                                 LambdaQueryWrapper<DepartTable> departWrapper = new LambdaQueryWrapper<>();
                                 departWrapper.eq(DepartTable::getDepartName,item.getDepartName());
+                                //如果院系不存在则不录入
+                                if(departTableMapper.selectOne(departWrapper) == null){
+                                    continue;
+                                }
                                 item.setDepartUuid(departTableMapper.selectOne(departWrapper).getDepartUuid());
                             }
                             if(item.getMajorName() != null){
                                 LambdaQueryWrapper<MajorTable> majorWrapper1 = new LambdaQueryWrapper<>();
                                 majorWrapper1.eq(MajorTable::getMajorName,item.getMajorName()).last("limit 1");
+                                //如果专业不存在则不录入
+                                if(majorTableMapper.selectOne(majorWrapper1) == null){
+                                    continue;
+                                }
                                 item.setMajorUuid(majorTableMapper.selectOne(majorWrapper1).getMajorUuid());
                             }
                             //密码加密
@@ -244,7 +258,9 @@ public class uploadController {
                                         existList.add(item.getUserName());
                                         item.setUserUuid(userTable.getUserUuid());
                                         userTableService.updateUserInfo(item);
-                                        System.out.println("用户已存在");
+//                                        System.out.println("用户已存在");
+                                    }else {
+                                        failList.add(item.getUserName());
                                     }
                                 });
                             }else{
@@ -324,7 +340,7 @@ public class uploadController {
                             //通过用户姓名和考生id确认到唯一考生是否存在
                             LambdaQueryWrapper<CandidateTable> candidateWrapper = new LambdaQueryWrapper<>();
                             AtomicInteger uniqueCount = new AtomicInteger();
-                            userTableList.stream().forEach(userTable -> {
+                            userTableList.forEach(userTable -> {
                                 candidateWrapper
                                         .eq(CandidateTable::getCandidateId,item.getCandidateId())
                                         .eq(CandidateTable::getUserUuid,userTable.getUserUuid());
@@ -364,14 +380,14 @@ public class uploadController {
                             if(!examTypeFlag){
                                 continue;
                             }
-                            //转换考试科目
-                            boolean examSubjectFlag = true;
                             //先获取到所属专业的uuid
                             LambdaQueryWrapper<MajorTable> majorWrapper = new LambdaQueryWrapper<>();
                             majorWrapper.eq(MajorTable::getMajorName,item.getMajorName());
                             List<MajorTable> majorTableList = majorTableMapper.selectList(majorWrapper);
+                            AtomicBoolean majorFlag = new AtomicBoolean(true);
                             //如果重复的专业里有这个科目则获取科目uuid
-                            majorTableList.stream().forEach(majorTable -> {
+                            majorTableList.forEach(majorTable -> {
+                                System.out.println("专业uuid"+majorTable.getMajorUuid());
                                 //获取科目uuid
                                 LambdaQueryWrapper<ExamClassTable> examClassTableLambdaQueryWrapper = new LambdaQueryWrapper<>();
                                 examClassTableLambdaQueryWrapper
@@ -380,9 +396,15 @@ public class uploadController {
                                 if(examClassTableMapper.exists(examClassTableLambdaQueryWrapper)){
                                     ExamClassTable examClassTable = examClassTableMapper.selectOne(examClassTableLambdaQueryWrapper);
                                     item.setExamClassUuid(examClassTable.getExamClassUuid());
+                                    System.out.println("科目uuid获取成功");
+                                    majorFlag.set(false);
                                 }
-
                             });
+                            if(majorFlag.get()){
+                                failList.add(item.getUserName());
+                                System.out.println("科目不存在");
+                                continue;
+                            }
                             //检查该类型、科目考试是否已存在
                             LambdaQueryWrapper<ExamScoreTable> examScoreWrapper = new LambdaQueryWrapper<>();
                             examScoreWrapper
@@ -390,7 +412,7 @@ public class uploadController {
                                     .eq(ExamScoreTable::getExamType,examScoreTable.getExamType())
                                     .eq(ExamScoreTable::getExamClassUuid,item.getExamClassUuid());
                             if(examScoreTableMapper.exists(examScoreWrapper)){
-                                failList.add(item.getUserName());
+                                existList.add(item.getUserName());
                                 System.out.println("该考试成绩已存在");
                                 continue;
                             }

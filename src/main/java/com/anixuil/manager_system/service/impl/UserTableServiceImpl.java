@@ -514,13 +514,15 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                             candidateTable.setInformationStatus("00");
                             break;
                         case "1":
-                            candidateTable.setInformationStatus("01");
+                            candidateTable.setInformationStatus("10");
                             break;
                         case "2":
-                            candidateTable.setInformationStatus("11");
+                            candidateTable.setInformationStatus("20");
                             break;
                         case "3":
-                            candidateTable.setInformationStatus("21");
+                            candidateTable.setInformationStatus("30");
+                        case "4":
+                            candidateTable.setInformationStatus("40");
                             break;
                     }
                 }

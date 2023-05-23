@@ -1,9 +1,8 @@
 package com.anixuil.manager_system.service.impl;
 
-import com.anixuil.manager_system.entity.DepartTable;
-import com.anixuil.manager_system.entity.MajorTable;
-import com.anixuil.manager_system.entity.Rest;
-import com.anixuil.manager_system.entity.StudentTable;
+import com.anixuil.manager_system.entity.*;
+import com.anixuil.manager_system.mapper.CandidateTableMapper;
+import com.anixuil.manager_system.mapper.ClassTableMapper;
 import com.anixuil.manager_system.mapper.DepartTableMapper;
 import com.anixuil.manager_system.service.DepartTableService;
 import com.anixuil.manager_system.service.MajorTableService;
@@ -40,6 +39,12 @@ public class DepartTableServiceImpl extends ServiceImpl<DepartTableMapper, Depar
     private MajorTableService majorTableService;
     @Resource
     private StudentTableService studentTableService;
+
+    @Resource
+    private CandidateTableMapper candidateTableMapper;
+
+    @Resource
+    private ClassTableMapper classTableMapper;
 
     @Override
     public Rest getAllDepart(Integer pageNum, Integer pageSize) {
@@ -133,8 +138,13 @@ public class DepartTableServiceImpl extends ServiceImpl<DepartTableMapper, Depar
         String msg = "删除院系";
         try{
             String departUuid = departTable.getDepartUuid();
-            int result = departTableMapper.deleteById(new QueryWrapper<DepartTable>().eq("depart_uuid",departUuid));
-            if(result != 0){
+            //检查当前院系下是否有专业 如果有 则不能删除
+            int majorCount = Math.toIntExact(majorTableService.count(new LambdaQueryWrapper<MajorTable>().eq(MajorTable::getDepartUuid, departUuid)));
+            if(majorCount > 0){
+                return Rest.fail(msg,"请将该院系下的相关信息处理完毕之后再尝试删除");
+            }
+            boolean result = removeById(departUuid);
+            if(result){
                 return Rest.success(msg, true);
             }
             return Rest.fail(msg, false);
