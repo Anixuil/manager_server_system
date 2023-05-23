@@ -81,6 +81,7 @@ public class StuTeachRelationTableServiceImpl extends ServiceImpl<StuTeachRelati
                         //然后看关系表里是否有对应的关系
                         List<StuTeachRelationTable> stuTeachRelationTableList = list(
                                 new LambdaQueryWrapper<StuTeachRelationTable>().eq(StuTeachRelationTable::getTeachUserUuid,userTable1.getUserUuid())
+                                        .eq(StuTeachRelationTable::getRelationType,"1")
                         );
                         //如果有关系，就把关系里的学生信息也拿出来
                         if(stuTeachRelationTableList.size() > 0){
