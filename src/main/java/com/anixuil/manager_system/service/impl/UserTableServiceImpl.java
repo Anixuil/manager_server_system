@@ -192,13 +192,17 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                 examScoreMap = examScoreTableService.getMap(examScoreTableQueryWrapper);
                 info.put("thirdScore",examScoreMap.get("thirdScore"));
                 info.put("informationStatus",candidateTable.getInformationStatus());
-                WorkFlowTable workFlowTable = workFlowTableMapper.selectOne(new LambdaQueryWrapper<WorkFlowTable>()
-                        .select(WorkFlowTable::getWorkFlowDate)
-                        .eq(WorkFlowTable::getWorkFlowType,candidateTable.getCandidateStatus())
-                        .orderByDesc(WorkFlowTable::getWorkFlowDate)
-                        .last("limit 1"));
-                info.put("examDate",workFlowTable.getWorkFlowDate());
-                System.out.println(candidateTable.getInformationStatus());
+                //如果考生状态为未录取 则不需要查询考试时间
+                if(!candidateTable.getCandidateStatus().equals("4")){
+                    WorkFlowTable workFlowTable = workFlowTableMapper.selectOne(new LambdaQueryWrapper<WorkFlowTable>()
+                            .select(WorkFlowTable::getWorkFlowDate)
+                            .eq(WorkFlowTable::getWorkFlowType,candidateTable.getCandidateStatus())
+                            .orderByDesc(WorkFlowTable::getWorkFlowDate)
+                            .last("limit 1"));
+                    info.put("examDate",workFlowTable.getWorkFlowDate());
+                }else{
+                    info.put("examDate",null);
+                }
             }
             if(role.equals("teacher")){
                 LambdaQueryWrapper<TeacherTable> wrapper = new LambdaQueryWrapper<>();
@@ -450,12 +454,18 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                 map.put("candidateId",userAll.getCandidateId());
                 map.put("candidateStatus",userAll.getCandidateStatus());
                 map.put("examPlace",userAll.getExamPlace());
-                WorkFlowTable workFlowTable = workFlowTableMapper.selectOne(new LambdaQueryWrapper<WorkFlowTable>()
-                        .select(WorkFlowTable::getWorkFlowDate)
-                        .eq(WorkFlowTable::getWorkFlowType,userAll.getCandidateStatus())
-                        .orderByDesc(WorkFlowTable::getWorkFlowDate)
-                        .last("limit 1"));
-                map.put("examDate",workFlowTable.getWorkFlowDate());
+                //如果是未录取 则不显示考试时间
+                if(!userAll.getCandidateStatus().equals("4")) {
+                    WorkFlowTable workFlowTable = workFlowTableMapper.selectOne(new LambdaQueryWrapper<WorkFlowTable>()
+                            .select(WorkFlowTable::getWorkFlowDate)
+                            .eq(WorkFlowTable::getWorkFlowType,userAll.getCandidateStatus())
+                            .orderByDesc(WorkFlowTable::getWorkFlowDate)
+                            .last("limit 1"));
+                    map.put("examDate",workFlowTable.getWorkFlowDate());
+                }else{
+                    map.put("examDate",null);
+                }
+
                 map.put("undergraduateSchool",userAll.getUndergraduateSchool());
                 map.put("createDate", Datetime.format(userAll.getCreateDate()));
                 map.put("updateDate",Datetime.format(userAll.getUpdateDate()));

@@ -78,6 +78,11 @@ public class DepartTableServiceImpl extends ServiceImpl<DepartTableMapper, Depar
                     majorMap.put("isDelete",majorTable.getIsDelete());
                     majorMap.put("studentCount",studentTableService.count(new LambdaQueryWrapper<StudentTable>().eq(StudentTable::getMajorUuid,majorTable.getMajorUuid())));
                     studentCount.addAndGet(studentTableService.count(new LambdaQueryWrapper<StudentTable>().eq(StudentTable::getMajorUuid, majorTable.getMajorUuid())));
+
+                    //获取该专业下所有课程
+                    List<ClassTable> classTableList = classTableMapper.selectList(new LambdaQueryWrapper<ClassTable>().eq(ClassTable::getMajorUuid, majorTable.getMajorUuid()));
+                    majorMap.put("classList",classTableList);
+
                     return majorMap;
                 }).collect(Collectors.toList()));
                 map.put("studentCount",studentCount.get());
