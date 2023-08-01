@@ -91,7 +91,7 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                 if(Objects.isNull(authenticate)){
                     return Rest.fail(msg,"验证失败");
                 }
-//            如果认证通过了，使用userId生成一个Jwt
+                //如果认证通过了，使用userId生成一个Jwt
                 UserDetail userDetail = (UserDetail) authenticate.getPrincipal();
                 String token = JwtUtils.createJWT(userDetail.getUserUuid());
                 Map<String, Object> map = new HashMap<>();
@@ -351,7 +351,7 @@ public class UserTableServiceImpl extends ServiceImpl<UserTableMapper, UserTable
                             wrapper1.eq(StudentTable::getUserUuid, userTable.getUserUuid());
                             System.out.println(!studentTableMapper.exists(wrapper1));
                             if(!studentTableMapper.exists(wrapper1)){
-                                System.out.println("添加学生信息");
+//                                System.out.println("添加学生信息");
                                 studentTableService.addStudent(user);
                             }
                             break;

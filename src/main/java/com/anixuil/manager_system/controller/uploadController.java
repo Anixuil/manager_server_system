@@ -102,6 +102,7 @@ public class uploadController {
                                             classTable1.setClassIntro(item.getClassIntro());
                                             classTable1.setMajorUuid(majorTable.getMajorUuid());
                                             classTableMapper.insert(classTable1);
+                                            successList.add(item.getClassName());
                                         }
                                     }
                                 }else{
@@ -113,6 +114,7 @@ public class uploadController {
                                         majorTable1.setMajorIntro(item.getMajorIntro());
                                         majorTable1.setDepartUuid(departTable.getDepartUuid());
                                         majorTableMapper.insert(majorTable1);
+                                        successList.add(item.getMajorName());
                                     }
                                     //存入课程
                                     LambdaQueryWrapper<MajorTable> majorWrapper1 = new LambdaQueryWrapper<>();
@@ -126,6 +128,7 @@ public class uploadController {
                                         classTable1.setClassIntro(item.getClassIntro());
                                         classTable1.setMajorUuid(majorTable2.getMajorUuid());
                                         classTableMapper.insert(classTable1);
+                                        successList.add(item.getClassName());
                                     }
                                 }
                             }else{
@@ -148,6 +151,7 @@ public class uploadController {
                                     majorTable1.setMajorIntro(item.getMajorIntro());
                                     majorTable1.setDepartUuid(departTable2.getDepartUuid());
                                     majorTableMapper.insert(majorTable1);
+                                    successList.add(item.getMajorName());
                                 }
                                 //存入课程
                                 LambdaQueryWrapper<MajorTable> majorWrapper1 = new LambdaQueryWrapper<>();
@@ -159,6 +163,7 @@ public class uploadController {
                                     classTable1.setClassIntro(item.getClassIntro());
                                     classTable1.setMajorUuid(majorTable2.getMajorUuid());
                                     classTableMapper.insert(classTable1);
+                                    successList.add(item.getClassName());
                                 }
                             }
                         }
@@ -274,6 +279,7 @@ public class uploadController {
                                     userTable.setUserPhone(item.getUserPhone());
                                     userTable.setUndergraduateSchool(item.getUndergraduateSchool());
                                     userTableMapper.insert(userTable);
+                                    successList.add(item.getUserName());
                                     String userUuid = userTableMapper.selectOne(userWrapper).getUserUuid();
                                     //根据用户身份信息存入对应的表
                                     switch (userTable.getUserRole()){
@@ -420,6 +426,7 @@ public class uploadController {
                             examScoreTable.setExamClassUuid(item.getExamClassUuid());
                             examScoreTable.setExamScore(item.getExamScore());
                             examScoreTableMapper.insert(examScoreTable);
+                            successList.add(item.getUserName());
                         }
                 }
                 result.put("successList",successList);

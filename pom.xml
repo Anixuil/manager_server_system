@@ -13,6 +13,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>manager_system</name>
     <description>manager_system</description>
+    <packaging>jar</packaging>
     <!--    版本控制-->
     <properties>
         <java.version>1.8</java.version>
